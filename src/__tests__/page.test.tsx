@@ -1,10 +1,14 @@
-import Home from '@/app/page'
-import '@testing-library/jest-dom'
-import { render, screen} from '@testing-library/react'
+import Home from "@/app/page";
+import { render } from "@testing-library/react";
+import PokemonService from "@/app/services/pokemonService";
+import { act } from "react";
 
-
-describe('Home', () => {
-    it('is true', () => {
-        expect(true).toBe(true)
-    })
-})
+jest.mock("../app/services/pokemonService.ts");
+describe("Home", () => {
+  it("calls pokemonservice when page loads", () => {
+    act(() => {
+      render(<Home />);
+    });
+    expect(PokemonService.getPokemonList).toHaveBeenCalledWith(12, 0);
+  });
+});
