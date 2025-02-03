@@ -60,11 +60,17 @@ describe("pokemon service", () => {
 
     const response = await PokemonService.getPokemonList(3, 0);
 
-    expect(response[0]).toMatchObject({
+    expect(response.pokemonList[0]).toMatchObject({
       name: 'bulbasaur',
       imageUrl: "exampleUrl",
       id: 1,
       types: ["grass", "poison"]
     })
   });
+  it("returns the next and previous value", async () => {
+    const response = await PokemonService.getPokemonList(3, 0);
+
+    expect(response.next).toEqual(true)
+    expect(response.previous).toEqual(false)
+  })
 });

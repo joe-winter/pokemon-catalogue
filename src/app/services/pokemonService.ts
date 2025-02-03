@@ -24,6 +24,12 @@ interface Type {
   };
 }
 
+interface PokemonListResponse {
+  next: boolean;
+  previous: boolean;
+  pokemonList: Pokemon[]
+}
+
 export default class PokemonService {
   public static async getPokemonList(limit: number = 0, offset: number = 0) {
     // initial fetch for list pokemon
@@ -46,7 +52,13 @@ export default class PokemonService {
       pokemonList.push(convertedPokemon);
     }
 
-    return pokemonList;
+    const res: PokemonListResponse = {
+      next: data.next !== null ? true : false,
+      previous: data.previous !== null ? true : false,
+      pokemonList
+    }
+
+    return res;
   }
 
   private static convertTypes(types: Type[]) {
