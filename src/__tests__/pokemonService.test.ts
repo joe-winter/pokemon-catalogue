@@ -3,17 +3,33 @@ import PokemonService from "@/app/services/pokemonService";
 describe("pokemon service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    fetchMock.mockResponseOnce(
+      JSON.stringify({
+        count: 1304,
+        next: "https://pokeapi.co/api/v2/pokemon/?offset=20&limit=20",
+        previous: null,
+        results: [
+          { name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" },
+          { name: "ivysaur", url: "https://pokeapi.co/api/v2/pokemon/2/" },
+          { name: "venusaur", url: "https://pokeapi.co/api/v2/pokemon/3/" },
+        ],
+      })
+    );
   });
   it("includes two query parameters and correct url in its request", async () => {
-    const response = await PokemonService.getPokemonList(20, 0);
-
-    // retrieve latest fetch parameters
-    const fetchArgs = fetchMock.mock.lastCall;
-
-    const url = fetchArgs?.[0];
-    const options = fetchArgs?.[1];
-
-    expect(url).toEqual("https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20");
-    expect(options?.method).toEqual("GET");
+    const response = await PokemonService.getPokemonList(3, 0);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=3",
+      { method: "GET" }
+    );
+  });
+  it("calls a fetch for each pokemon in the list", async () => {
+    const response = await PokemonService.getPokemonList(3, 0);
+    expect(fetchMock).toHaveBeenCalledTimes(4);
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      "https://pokeapi.co/api/v2/pokemon/1/",
+      { method: "GET" }
+    );
   });
 });
