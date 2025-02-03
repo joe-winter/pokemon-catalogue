@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import PokemonCard from "./components/PokemonCard";
 import PokemonService from "./services/pokemonService";
 import { Button } from "@/components/ui/button";
+import PageSwitcher from "./components/PageSwitcher";
 // import { MoveRight } from "lucide-react";
 interface Pokemon {
   name: string;
@@ -23,20 +24,24 @@ export default function Home() {
     next: false,
     pokemonList: [{ name: "", imageUrl: "", id: 0, types: [""] }],
   });
+  const [pageNumber, setPageNumber] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const pokemonData = await PokemonService.getPokemonList(12, 0);
+        const pokemonData = await PokemonService.getPokemonList(
+          12,
+          12 * pageNumber
+        );
         setData(pokemonData);
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
-  }, []);
+  }, [pageNumber]);
 
-  console.log(data);
+  console.log(pageNumber);
   return (
     <div className="flex flex-col items-center font-[family-name:var(--font-geist-sans)]">
       {/* title header */}
@@ -61,50 +66,12 @@ export default function Home() {
       </div>
       {/* page switcher */}
       <div className="mt-8 flex">
-        <div className="px-2 max-h-2">
-          <Button className="text-xs" disabled={!data.previous}>
-            <span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-move-left"
-              >
-                <path d="M6 8L2 12L6 16" />
-                <path d="M2 12H22" />
-              </svg>
-            </span>
-            Back
-          </Button>
-        </div>
-        <div className="px-2">
-          <Button className="text-xs" disabled={!data.next}>
-            Next
-            <span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-move-right"
-              >
-                <path d="M18 8L22 12L18 16" />
-                <path d="M2 12H22" />
-              </svg>
-            </span>
-          </Button>
-        </div>
+        <PageSwitcher
+          next={data.next}
+          previous={data.previous}
+          pageNumber={pageNumber}
+          setPageNumber={setPageNumber}
+        />
       </div>
       {/* footer */}
       <div className="flex flex-col border-t items-center mt-8 w-full">
