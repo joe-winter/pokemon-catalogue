@@ -9,7 +9,7 @@ describe("Home", () => {
     act(() => {
       render(<Home />);
     });
-    expect(PokemonService.getPokemonList).toHaveBeenCalledWith(12, 0);
+    expect(PokemonService.getPokemonPerPage).toHaveBeenCalledWith(12, 0);
   });
   it("has back and next buttons", () => {
     render(<Home />);

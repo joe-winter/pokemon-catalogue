@@ -41,14 +41,14 @@ describe("pokemon service", () => {
     );
   });
   it("includes two query parameters and correct url in its request", async () => {
-    const response = await PokemonService.getPokemonList(3, 0);
+    await PokemonService.getPokemonPerPage(3, 0);
     expect(fetchMock).toHaveBeenCalledWith(
       "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=3",
       { method: "GET" }
     );
   });
   it("calls a fetch for each pokemon in the list", async () => {
-    const response = await PokemonService.getPokemonList(3, 0);
+    await PokemonService.getPokemonPerPage(3, 0);
     expect(fetchMock).toHaveBeenCalledTimes(4);
     expect(fetchMock).toHaveBeenNthCalledWith(
       2,
@@ -58,7 +58,7 @@ describe("pokemon service", () => {
   });
   it("returns pokemon details", async () => {
 
-    const response = await PokemonService.getPokemonList(3, 0);
+    const response = await PokemonService.getPokemonPerPage(3, 0);
 
     expect(response.pokemonList[0]).toMatchObject({
       name: 'bulbasaur',
@@ -68,7 +68,7 @@ describe("pokemon service", () => {
     })
   });
   it("returns the next and previous value", async () => {
-    const response = await PokemonService.getPokemonList(3, 0);
+    const response = await PokemonService.getPokemonPerPage(3, 0);
 
     expect(response.next).toEqual(true)
     expect(response.previous).toEqual(false)
