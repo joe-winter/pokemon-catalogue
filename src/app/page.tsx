@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useEffect, useState } from "react";
 import PokemonCard from "./components/PokemonCard";
 import PokemonService from "./services/pokemonService";
@@ -18,7 +18,7 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const pokemonData = await PokemonService.getPokemonList(20, 0);
+        const pokemonData = await PokemonService.getPokemonList(12, 0);
         setPokemonList(pokemonData);
       } catch (err) {
         console.log(err);
@@ -27,20 +27,26 @@ export default function Home() {
     fetchData();
   }, []);
 
-  console.log(pokemonList)
+  console.log(pokemonList);
   return (
-    <div className="flex justify-center font-[family-name:var(--font-geist-sans)]">
-      <div className="p-4">
-        {pokemonList[0].imageUrl &&
-          pokemonList.map((pokemon, index) => (
-            <PokemonCard
-              key={index}
-              name={pokemon.name}
-              imageUrl={pokemon.imageUrl}
-              number={"#" + pokemon.id.toString().padStart(4, '0')}
-              types={pokemon.types}
-            />
-          ))}
+    <div className="font-[family-name:var(--font-geist-sans)]">
+      <div className="flex-col">
+        <div className="flex border-b justify-center">
+          <div>Pokémon Browser</div>
+          <div>Search and find Pokémon</div>
+        </div>
+        <div className="p-4 grid grid-cols-4 gap-4">
+          {pokemonList[0].imageUrl &&
+            pokemonList.map((pokemon, index) => (
+              <PokemonCard
+                key={index}
+                name={pokemon.name}
+                imageUrl={pokemon.imageUrl}
+                number={"#" + pokemon.id.toString().padStart(4, "0")}
+                types={pokemon.types}
+              />
+            ))}
+        </div>
       </div>
     </div>
   );
