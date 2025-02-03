@@ -18,23 +18,24 @@ interface Pokemon {
 }
 
 interface Type {
-  name: string;
-  url: string;
+  type: {
+    name: string;
+    url: string;
+  };
 }
 
 export default class PokemonService {
   public static async getPokemonList(limit: number = 0, offset: number = 0) {
+    // initial fetch for list pokemon
     const url = `https://pokeapi.co/api/v2/pokemon/?offset=${offset}&limit=${limit}`;
-
     const response = await fetch(url, { method: "GET" });
-
     const data: PokemonFetchData = await response.json();
 
-    const pokemonList: Pokemon[] = []
+    // loop through list and fetch details of each pokemon
+    const pokemonList: Pokemon[] = [];
 
     for (const pokemon of data.results) {
       const response = await fetch(pokemon.url, { method: "GET" });
-      console.log(response)
       const data = await response.json();
       const convertedPokemon = {
         name: data.name,
@@ -42,17 +43,14 @@ export default class PokemonService {
         imageUrl: data.sprites.front_default,
         types: this.convertTypes(data.types),
       };
-      pokemonList.push(convertedPokemon)
+      pokemonList.push(convertedPokemon);
     }
 
-    return pokemonList
-    
+    return pokemonList;
   }
 
-  private static convertTypes (types: Type[]) {
-    return types.map((type) => type.name)
-
+  private static convertTypes(types: Type[]) {
+    // converts list of objects into list of strings
+    return types.map((type) => type.type.name);
   }
 }
-
-

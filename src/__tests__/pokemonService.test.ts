@@ -20,7 +20,7 @@ describe("pokemon service", () => {
         id: 1,
         name: "bulbasaur",
         sprites: { front_default: "exampleUrl" },
-        types: [{ name: "grass" }, { name: "poison" }],
+        types: [{type: { name: "grass" }}, {type: { name: "poison" }}],
       })
     );
     fetchMock.mockResponseOnce(
@@ -28,7 +28,7 @@ describe("pokemon service", () => {
         id: 2,
         name: "bulbasaur",
         sprites: { front_default: "exampleUrl" },
-        types: [{ name: "grass" }, { name: "poison" }],
+        types: [{type: { name: "grass" }}, {type: { name: "poison" }}],
       })
     );
     fetchMock.mockResponseOnce(
@@ -36,7 +36,7 @@ describe("pokemon service", () => {
         id: 3,
         name: "bulbasaur",
         sprites: { front_default: "exampleUrl" },
-        types: [{ name: "grass" }, { name: "poison" }],
+        types: [{type: { name: "grass" }}, {type: { name: "poison" }}],
       })
     );
   });

@@ -17,7 +17,7 @@ interface PokemonCardProps {
 }
 
 export default function PokemonCard({
-  name,
+  name = "hello",
   imageUrl,
   number,
   types,

@@ -1,15 +1,46 @@
+'use client'
+import { useEffect, useState } from "react";
 import PokemonCard from "./components/PokemonCard";
+import PokemonService from "./services/pokemonService";
+
+interface Pokemon {
+  name: string;
+  imageUrl: string;
+  id: number;
+  types: string[];
+}
 
 export default function Home() {
+  const [pokemonList, setPokemonList] = useState<Pokemon[]>([
+    { name: "", imageUrl: "", id: 0, types: [""] },
+  ]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const pokemonData = await PokemonService.getPokemonList(20, 0);
+        setPokemonList(pokemonData);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  console.log(pokemonList)
   return (
     <div className="flex justify-center font-[family-name:var(--font-geist-sans)]">
       <div className="p-4">
-        <PokemonCard
-          name="ditto"
-          imageUrl="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png"
-          number="#0002"
-          types={["normal"]}
-        />
+        {pokemonList[0].imageUrl &&
+          pokemonList.map((pokemon, index) => (
+            <PokemonCard
+              key={index}
+              name={pokemon.name}
+              imageUrl={pokemon.imageUrl}
+              number={"#" + pokemon.id.toString().padStart(4, '0')}
+              types={pokemon.types}
+            />
+          ))}
       </div>
     </div>
   );
