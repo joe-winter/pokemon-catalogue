@@ -15,6 +15,30 @@ describe("pokemon service", () => {
         ],
       })
     );
+    fetchMock.mockResponseOnce(
+      JSON.stringify({
+        id: 1,
+        name: "bulbasaur",
+        sprites: { front_default: "exampleUrl" },
+        types: [{ name: "grass" }, { name: "poison" }],
+      })
+    );
+    fetchMock.mockResponseOnce(
+      JSON.stringify({
+        id: 2,
+        name: "bulbasaur",
+        sprites: { front_default: "exampleUrl" },
+        types: [{ name: "grass" }, { name: "poison" }],
+      })
+    );
+    fetchMock.mockResponseOnce(
+      JSON.stringify({
+        id: 3,
+        name: "bulbasaur",
+        sprites: { front_default: "exampleUrl" },
+        types: [{ name: "grass" }, { name: "poison" }],
+      })
+    );
   });
   it("includes two query parameters and correct url in its request", async () => {
     const response = await PokemonService.getPokemonList(3, 0);
@@ -31,5 +55,16 @@ describe("pokemon service", () => {
       "https://pokeapi.co/api/v2/pokemon/1/",
       { method: "GET" }
     );
+  });
+  it("returns pokemon details", async () => {
+
+    const response = await PokemonService.getPokemonList(3, 0);
+
+    expect(response[0]).toMatchObject({
+      name: 'bulbasaur',
+      imageUrl: "exampleUrl",
+      id: 1,
+      types: ["grass", "poison"]
+    })
   });
 });
