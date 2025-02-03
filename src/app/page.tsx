@@ -5,8 +5,7 @@ import PokemonService from "./services/pokemonService";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import PageSwitcher from "./components/PageSwitcher";
-import { capitalizeString } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 // import { MoveRight } from "lucide-react";
 interface Pokemon {
   name: string;
@@ -15,65 +14,24 @@ interface Pokemon {
   types: string[];
 }
 
-interface PokemonData {
-  next: boolean;
-  previous: boolean;
-  pokemonList: Pokemon[];
-}
-
 interface PokemonUrl {
   name: string;
   url: string;
 }
 
 export default function Home() {
-  const [data, setData] = useState<PokemonData>({
-    previous: false,
-    next: false,
-    pokemonList: [{ name: "", imageUrl: "", id: 0, types: [""] }],
-  });
+  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [pokemonList, setPokemonList] = useState<PokemonUrl[]>([
     { name: "", url: "" },
   ]);
-  const [value, setValue] = useState("");
-  const [searchStatus, setSearchStatus] = useState("Explore Pokémon");
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-    // setIsOpen(true);
-  };
+  const [searchValue, setSearchValue] = useState("");
+  const [searchMessage, setSearchMessage] = useState("Explore Pokémon");
+  const [search, setSearch] = useState(false);
+  const [next, setNext] = useState(true);
+  const [back, setBack] = useState(true);
 
-  const handleSearch = async () => {
-    if (value !== "") {
-      const response = await PokemonService.getPokemonFromList(
-        filteredList.slice(0, 12)
-      );
-      setData({ previous: false, next: false, pokemonList: response });
-      setSearchStatus(`Search results for "${value}"`);
-    }
-  };
-
-  const filteredList = useMemo(() => {
-    return pokemonList.filter((pokemon) =>
-      pokemon.name.toLowerCase().includes(value.toLowerCase())
-    );
-  }, [pokemonList, value]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const pokemonData = await PokemonService.getPokemonPerPage(
-          12,
-          12 * pageNumber
-        );
-        setData(pokemonData);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchData();
-  }, [pageNumber]);
-
+  // fetch list of pokemon names and urls on initial page load
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -86,6 +44,47 @@ export default function Home() {
     fetchData();
   }, []);
 
+  // when the search value is changed the list of urls is filtered
+  const filteredList = useMemo(() => {
+    return pokemonList.filter((pokemon) =>
+      pokemon.name.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  }, [pokemonList, searchValue]);
+
+  // fetch pokemon data for each url in the url list or filtered url list
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const list = search ? filteredList : pokemonList;
+        const response = await PokemonService.getPokemonFromList(
+          list.slice(12 * pageNumber, 12 * (pageNumber + 1))
+        );
+        setPokemons(response);
+        const totalPages = Math.ceil(list.length / 12);
+        setBack(pageNumber !== 0);
+        setNext(pageNumber < totalPages - 1);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [filteredList, pageNumber, pokemonList, search]);
+
+  // when user searches fetch data from filtered url list and update search status
+  const handleSearch = async () => {
+    if (searchValue !== "") {
+      const response = await PokemonService.getPokemonFromList(
+        filteredList.slice(12 * pageNumber, 12 * (pageNumber + 1))
+      );
+      setPokemons(response);
+      setBack(pageNumber !== 0);
+      const totalPages = Math.ceil(filteredList.length / 12);
+      setNext(pageNumber < totalPages - 1);
+      setSearchMessage(`Search results for "${searchValue}"`);
+      setSearch(true);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center font-[family-name:var(--font-geist-sans)]">
       {/* title header */}
@@ -97,13 +96,15 @@ export default function Home() {
       </div>
       {/* search bar */}
       <div className="flex items-center justify-between w-full px-44 mb-8">
-        <div className="font-semibold text-2xl">{searchStatus}</div>
+        <div className="font-semibold text-2xl">{searchMessage}</div>
         <div className="flex">
           <div className="">
             <Input
               placeholder="Find Pokémon"
-              value={value}
-              onChange={handleInputChange}
+              value={searchValue}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                setSearchValue(e.target.value);
+              }}
             />
           </div>
           <div className="ml-3">
@@ -113,22 +114,21 @@ export default function Home() {
       </div>
       {/* pokemon grid */}
       <div className="grid grid-cols-4 max-w-fit gap-x-4 gap-y-8">
-        {data.pokemonList[0].imageUrl &&
-          data.pokemonList.map((data, index) => (
-            <PokemonCard
-              key={index}
-              name={data.name}
-              imageUrl={data.imageUrl}
-              number={"#" + data.id.toString().padStart(4, "0")}
-              types={data.types}
-            />
-          ))}
+        {pokemons.map((data, index) => (
+          <PokemonCard
+            key={index}
+            name={data.name}
+            imageUrl={data.imageUrl}
+            number={"#" + data.id.toString().padStart(4, "0")}
+            types={data.types}
+          />
+        ))}
       </div>
       {/* page switcher */}
       <div className="mt-8 flex">
         <PageSwitcher
-          next={data.next}
-          previous={data.previous}
+          next={next}
+          previous={back}
           pageNumber={pageNumber}
           setPageNumber={setPageNumber}
         />

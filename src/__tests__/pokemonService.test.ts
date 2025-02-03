@@ -73,4 +73,9 @@ describe("pokemon service", () => {
     expect(response.next).toEqual(true)
     expect(response.previous).toEqual(false)
   })
+  it("returns a list of pokemon urls", async () => {
+    const response = await PokemonService.getAllPokemon()
+
+    expect(response[0]).toMatchObject({ name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" })
+  })
 });
