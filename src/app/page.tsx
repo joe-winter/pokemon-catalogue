@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import PokemonCard from "./components/PokemonCard";
 import PokemonService from "./services/pokemonService";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import PageSwitcher from "./components/PageSwitcher";
 // import { MoveRight } from "lucide-react";
@@ -51,7 +52,19 @@ export default function Home() {
           Search and find Pokémon
         </h2>
       </div>
-      {/* data grid */}
+      {/* search bar */}
+      <div className="flex items-center justify-between w-full px-44 mb-8">
+        <div className="font-semibold text-2xl">Explore Pokémon</div>
+        <div className="flex">
+          <div>
+            <Input placeholder="Find Pokémon"/>
+          </div>
+          <div className="ml-3">
+            <Button>Search</Button>
+          </div>
+        </div>
+      </div>
+      {/* pokemon grid */}
       <div className="grid grid-cols-4 max-w-fit gap-x-4 gap-y-8">
         {data.pokemonList[0].imageUrl &&
           data.pokemonList.map((data, index) => (
