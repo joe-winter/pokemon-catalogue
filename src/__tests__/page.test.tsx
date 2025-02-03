@@ -1,5 +1,5 @@
 import Home from "@/app/page";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import PokemonService from "@/app/services/pokemonService";
 import { act } from "react";
 
@@ -11,4 +11,13 @@ describe("Home", () => {
     });
     expect(PokemonService.getPokemonList).toHaveBeenCalledWith(12, 0);
   });
+  it("has back and next buttons", () => {
+    render(<Home />);
+
+    const nextButtonEl = screen.getByRole('button', {name: 'Next'})
+    expect(nextButtonEl).toBeInTheDocument()
+
+    const backButtonEl = screen.getByRole('button', {name: 'Back'})
+    expect(backButtonEl).toBeInTheDocument()
+  })
 });
