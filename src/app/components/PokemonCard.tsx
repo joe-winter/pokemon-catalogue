@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { capitalizeString } from "@/lib/utils";
 
 interface PokemonCardProps {
   name: string;
@@ -23,8 +24,8 @@ export default function PokemonCard({
 }: PokemonCardProps) {
   return (
     <Card>
-      <CardContent>
-        <div>
+      <div className="bg-gray-100 w-full">
+        <CardContent>
           <Image
             src={imageUrl}
             alt={imageUrl}
@@ -32,13 +33,17 @@ export default function PokemonCard({
             height={200}
             quality={100}
           />
-        </div>
-        <h2>{name}</h2>
-        <span>{number}</span>
+        </CardContent>
+      </div>
+      <CardContent>
+        <h2 className="font-bold text-xl pt-3">{capitalizeString(name)}</h2>
+        <div className="text-gray-500 text-sm mb-7">{number}</div>
         {types &&
           types.map((type, index) => (
-            <div key={index}>
-              {type.charAt(0).toUpperCase() + type.slice(1)}
+            <div className="bg-black max-w-fit rounded" key={index}>
+              <div className="px-2 py-0.5 text-white text-[10px]">
+                {capitalizeString(type)}
+              </div>
             </div>
           ))}
       </CardContent>
