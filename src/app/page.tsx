@@ -30,12 +30,12 @@ export default function Home() {
   console.log(pokemonList);
   return (
     <div className="font-[family-name:var(--font-geist-sans)]">
-      <div className="flex-col">
-        <div className="flex border-b justify-center">
-          <div>Pokémon Browser</div>
-          <div>Search and find Pokémon</div>
+      <div className="flex flex-col items-center">
+        <div className="flex flex-col border-b items-center mb-8 w-full">
+          <h1 className="font-semibold text-4xl mt-12">Pokémon Browser</h1>
+          <h2 className="font-semibold text-gray-500 text-lg mb-14">Search and find Pokémon</h2>
         </div>
-        <div className="p-4 grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-4 max-w-fit gap-x-4 gap-y-8">
           {pokemonList[0].imageUrl &&
             pokemonList.map((pokemon, index) => (
               <PokemonCard
