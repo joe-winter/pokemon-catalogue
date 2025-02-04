@@ -78,15 +78,18 @@ export default function Page({
     fetchData();
   }, [params]);
   return (
-    <div className=" ont-[family-name:var(--font-geist-sans)]">
-      <h1>Pokemon Browser</h1>
+    <div className="font-[family-name:var(--font-geist-sans)]">
+      <h1 className="font-semibold text-2xl my-6 pl-16">Pokemon Browser</h1>
+      <div className="bg-gray-300 h-40 flex justify-center">
       <Image
+      className="bg-gray-200 rounded-full absolute z-50 mt-24 border-white border-2"
         src={pokemon.imageUrl}
         alt={pokemon.name}
         width={200}
         height={200}
       />
-      <div className="flex gap-4">
+      </div>
+      <div className="flex gap-4 mt-48">
         <h2>{capitalizeString(pokemon.name)}</h2>
         <h2>{"#" + pokemon.id.toString().padStart(4, "0")}</h2>
       </div>
