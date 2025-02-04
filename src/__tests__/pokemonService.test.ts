@@ -85,7 +85,7 @@ describe("pokemon service", () => {
   describe("get single pokemon", () => {
     beforeEach(() => {
       fetchMock.resetMocks();
-      fetchMock.mockResponseOnce(
+      fetchMock.mockResponse(
         JSON.stringify({
           abilities: [
             {
@@ -114,6 +114,10 @@ describe("pokemon service", () => {
             },
           ],
           weight: 69,
+          species: {
+            name: "bulbasaur",
+            url: "https://pokeapi.co/api/v2/pokemon-species/1/",
+          },
           stats: [
             {
               base_stat: 45,
@@ -212,6 +216,10 @@ describe("pokemon service", () => {
             },
           ],
           weight: 69,
+          species: {
+            name: "bulbasaur",
+            url: "https://pokeapi.co/api/v2/pokemon-species/1/",
+          },
           stats: [
             {
               base_stat: 45,
@@ -298,7 +306,7 @@ describe("pokemon service", () => {
           },
         })
       );
-      fetchMock.mockResponseOnce(
+      fetchMock.mockResponse(
         JSON.stringify({
           damage_relations: {
             double_damage_from: [
@@ -339,12 +347,9 @@ describe("pokemon service", () => {
 
       const response = await PokemonService.getPokemon("bulbasaur");
 
-      expect(response.weaknesses.sort()).toEqual([
-        "fire",
-        "flying",
-        "psychic",
-        "ice",
-      ].sort());
+      expect(response.weaknesses.sort()).toEqual(
+        ["fire", "flying", "psychic", "ice"].sort()
+      );
     });
     it("given only one type returns weaknesses", async () => {
       fetchMock.resetMocks();
@@ -372,6 +377,10 @@ describe("pokemon service", () => {
             },
           ],
           weight: 69,
+          species: {
+            name: "bulbasaur",
+            url: "https://pokeapi.co/api/v2/pokemon-species/1/",
+          },
           stats: [
             {
               base_stat: 45,
@@ -412,7 +421,7 @@ describe("pokemon service", () => {
           ],
         })
       );
-      fetchMock.mockResponseOnce(
+      fetchMock.mockResponse(
         JSON.stringify({
           damage_relations: {
             double_damage_from: [
@@ -460,14 +469,10 @@ describe("pokemon service", () => {
       );
       const response = await PokemonService.getPokemon("test");
 
-      expect(response.weaknesses.sort()).toEqual([
-        "fire",
-        "flying",
-        "poison",
-        "ice",
-        "bug",
-      ].sort());
-    })
+      expect(response.weaknesses.sort()).toEqual(
+        ["fire", "flying", "poison", "ice", "bug"].sort()
+      );
+    });
     it("returns weaknesses given one type is immune and another tpye is weak", async () => {
       fetchMock.resetMocks();
       fetchMock.mockResponseOnce(
@@ -501,6 +506,10 @@ describe("pokemon service", () => {
             },
           ],
           weight: 69,
+          species: {
+            name: "bulbasaur",
+            url: "https://pokeapi.co/api/v2/pokemon-species/1/",
+          },
           stats: [
             {
               base_stat: 45,
@@ -588,12 +597,12 @@ describe("pokemon service", () => {
               {
                 name: "psychic",
                 url: "https://pokeapi.co/api/v2/type/14/",
-              }
-            ]
+              },
+            ],
           },
         })
       );
-      fetchMock.mockResponseOnce(
+      fetchMock.mockResponse(
         JSON.stringify({
           damage_relations: {
             double_damage_from: [
@@ -634,11 +643,9 @@ describe("pokemon service", () => {
 
       const response = await PokemonService.getPokemon("test");
 
-      expect(response.weaknesses.sort()).toEqual([
-        "fire",
-        "flying",
-        "ice",
-      ].sort());
-    })
+      expect(response.weaknesses.sort()).toEqual(
+        ["fire", "flying", "ice"].sort()
+      );
+    });
   });
 });

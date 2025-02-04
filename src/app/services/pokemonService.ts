@@ -45,7 +45,7 @@ interface PokemonDetails {
   name: string;
   id: number;
   imageUrl: string;
-  description: string;
+  entry: string;
   height: number;
   category: string;
   weight: number;
@@ -93,46 +93,43 @@ export default class PokemonService {
         const response = await fetch(type.type.url);
         const data = await response.json();
         const damageRelations: DamageRelations = data.damage_relations;
-        if (damageRelations.double_damage_from) {
-          const doubleDamageFromNames = damageRelations.double_damage_from.map(
-            (element) => element.name
-          );
-          doubleDamageFrom = doubleDamageFrom.concat(doubleDamageFromNames);
-        }
-        if (damageRelations.half_damage_from) {
-          const halfDamageFromNames = damageRelations.half_damage_from.map(
-            (element) => element.name
-          );
-          halfDamageFrom = halfDamageFrom.concat(halfDamageFromNames);
-        }
-        if (damageRelations.no_damage_from) {
-          const noDamageFromNames = damageRelations.no_damage_from.map(
-            (element) => element.name
-          );
-          noDamageFrom = noDamageFrom.concat(noDamageFromNames);
-        }
+        const doubleDamageFromNames = damageRelations.double_damage_from?.map(
+          (element) => element.name
+        );
+        doubleDamageFrom = doubleDamageFrom.concat(doubleDamageFromNames);
+        const halfDamageFromNames = damageRelations.half_damage_from?.map(
+          (element) => element.name
+        );
+        halfDamageFrom = halfDamageFrom.concat(halfDamageFromNames);
+        const noDamageFromNames = damageRelations.no_damage_from?.map(
+          (element) => element.name
+        );
+        noDamageFrom = noDamageFrom.concat(noDamageFromNames);
       }
     }
     doubleDamageFrom = [...new Set(doubleDamageFrom)];
     halfDamageFrom = [...new Set(halfDamageFrom)];
     noDamageFrom = [...new Set(noDamageFrom)];
-    console.log("double damage", doubleDamageFrom);
-    console.log("double damage", doubleDamageFrom);
 
     // remove from double damage list if in half damage list
     const array = doubleDamageFrom.filter(
       (element) => halfDamageFrom.indexOf(element) < 0
     );
-    console.log("first filter", array);
     // remove from array if in no damage from list
     const array2 = array.filter((element) => noDamageFrom.indexOf(element) < 0);
-    console.log("second filter", array2);
     return array2;
   }
 
   private static getTypes(types: TypeUrl[]) {
     // converts list of objects into list of strings
     return types.map((type) => type.type.name);
+  }
+
+  private static async getEntry (speciesUrl: string) {
+    const response = await fetch(speciesUrl, {method: 'GET'})
+    const data = await response.json()
+    console.log("data", data)
+    return data.flavor_text_entries?.[0].flavor_text
   }
 
   public static async getAllPokemon() {
@@ -175,13 +172,13 @@ export default class PokemonService {
       name: basicData.name,
       id: basicData.id,
       imageUrl: basicData.sprites.front_default,
-      description: "",
       height: basicData.height / 10,
       category: "",
       weight: basicData.weight / 10,
       gender: [""],
       type: this.getTypes(basicData.types),
       weaknesses: await this.getWeaknesses(basicData.types),
+      entry: await this.getEntry(basicData.species.url),
       ability: {
         name: basicData.abilities[0].ability.name,
         description: "",
