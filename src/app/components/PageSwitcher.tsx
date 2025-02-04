@@ -2,19 +2,27 @@ import { Button } from "@/components/ui/button";
 import { Dispatch, SetStateAction } from "react";
 
 interface PageSwitcherProps {
-  next: boolean;
-  previous: boolean;
+  totalItems: number;
+  itemsPerPage: number;
   pageNumber: number;
-  setPageNumber: Dispatch<SetStateAction<number>>
+  setPageNumber: Dispatch<SetStateAction<number>>;
+  disabled?: boolean;
 }
 
-export default function PageSwitcher({next, previous, pageNumber, setPageNumber}: PageSwitcherProps) {
+export default function PageSwitcher({
+  totalItems,
+  itemsPerPage,
+  pageNumber,
+  setPageNumber,
+  disabled,
+}: PageSwitcherProps) {
   return (
     <>
+      {/* back button to be disabled when page number is zero */}
       <div className="px-2 max-h-2">
         <Button
           className="text-xs"
-          disabled={!previous}
+          disabled={pageNumber < 1 || disabled}
           onClick={() => setPageNumber(pageNumber - 1)}
         >
           <span>
@@ -37,10 +45,13 @@ export default function PageSwitcher({next, previous, pageNumber, setPageNumber}
           Back
         </Button>
       </div>
+      {/* next button to be disabled when page number is equal to the total itesm divided by items per page */}
       <div className="px-2">
         <Button
           className="text-xs"
-          disabled={!next}
+          disabled={
+            pageNumber === Math.ceil(totalItems / itemsPerPage) - 1 || disabled
+          }
           onClick={() => setPageNumber(pageNumber + 1)}
         >
           Next

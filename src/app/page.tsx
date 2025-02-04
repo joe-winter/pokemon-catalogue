@@ -1,12 +1,10 @@
 "use client";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import PokemonCard from "./components/PokemonCard";
 import PokemonService from "./services/pokemonService";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import PageSwitcher from "./components/PageSwitcher";
-
-// import { MoveRight } from "lucide-react";
+import SearchBar from "./components/SearchBar";
+import LoadingSpinner from "./components/LoadingSpinner";
 interface Pokemon {
   name: string;
   imageUrl: string;
@@ -20,23 +18,25 @@ interface PokemonUrl {
 }
 
 export default function Home() {
-  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [displayedPokemons, setDisplayedPokemons] = useState<Pokemon[]>([]);
   const [pageNumber, setPageNumber] = useState(0);
-  const [pokemonList, setPokemonList] = useState<PokemonUrl[]>([
+  const [initialPokemonList, setInitialPokemonList] = useState<PokemonUrl[]>([
+    { name: "", url: "" },
+  ]);
+  const [pokemonList, setpokemonList] = useState<PokemonUrl[]>([
     { name: "", url: "" },
   ]);
   const [searchValue, setSearchValue] = useState("");
   const [searchMessage, setSearchMessage] = useState("Explore Pokémon");
-  const [search, setSearch] = useState(false);
-  const [next, setNext] = useState(true);
-  const [back, setBack] = useState(true);
 
-  // fetch list of pokemon names and urls on initial page load
+  // fetch complete list of pokemon names and urls on initial page load
   useEffect(() => {
     const fetchData = async () => {
       try {
         const pokemonData = await PokemonService.getAllPokemon();
-        setPokemonList(pokemonData);
+        setInitialPokemonList(pokemonData);
+        setpokemonList(pokemonData);
       } catch (err) {
         console.log(err);
       }
@@ -44,49 +44,40 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // when the search value is changed the list of urls is filtered
-  const filteredList = useMemo(() => {
-    return pokemonList.filter((pokemon) =>
-      pokemon.name.toLowerCase().includes(searchValue.toLowerCase())
-    );
-  }, [pokemonList, searchValue]);
-
-  // fetch pokemon data for each url in the url list or filtered url list
+  // fetch pokemon data for each url in the pokemon list
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
-        const list = search ? filteredList : pokemonList;
         const response = await PokemonService.getPokemonFromList(
-          list.slice(12 * pageNumber, 12 * (pageNumber + 1))
+          pokemonList.slice(12 * pageNumber, 12 * (pageNumber + 1))
         );
-        setPokemons(response);
-        const totalPages = Math.ceil(list.length / 12);
-        setBack(pageNumber !== 0);
-        setNext(pageNumber < totalPages - 1);
+        setDisplayedPokemons(response);
       } catch (err) {
         console.log(err);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();
-  }, [filteredList, pageNumber, pokemonList, search]);
+  }, [pageNumber, pokemonList]);
 
-  // when user searches fetch data from filtered url list and update search status
+  console.log(pokemonList.length)
+
+  // when user searches set pokemon list to filtered list
   const handleSearch = async () => {
     if (searchValue !== "") {
-      const response = await PokemonService.getPokemonFromList(
-        filteredList.slice(12 * pageNumber, 12 * (pageNumber + 1))
+      setPageNumber(0)
+      const filteredList = initialPokemonList.filter((pokemon) =>
+        pokemon.name.toLowerCase().includes(searchValue.toLowerCase())
       );
-      setPokemons(response);
-      setBack(pageNumber !== 0);
-      const totalPages = Math.ceil(filteredList.length / 12);
-      setNext(pageNumber < totalPages - 1);
+      setpokemonList(filteredList);
       setSearchMessage(`Search results for "${searchValue}"`);
-      setSearch(true);
     }
   };
 
   return (
-    <div className="flex flex-col items-center font-[family-name:var(--font-geist-sans)]">
+    <div className="max-w-full flex flex-col items-center font-[family-name:var(--font-geist-sans)]">
       {/* title header */}
       <div className="flex flex-col border-b items-center mb-8 w-full">
         <h1 className="font-semibold text-4xl mt-12">Pokémon Browser</h1>
@@ -94,47 +85,54 @@ export default function Home() {
           Search and find Pokémon
         </h2>
       </div>
-      {/* search bar */}
-      <div className="flex items-center justify-between w-full px-44 mb-8">
-        <div className="font-semibold text-2xl">{searchMessage}</div>
-        <div className="flex">
-          <div className="">
-            <Input
-              placeholder="Find Pokémon"
-              value={searchValue}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setSearchValue(e.target.value);
-              }}
-            />
-          </div>
-          <div className="ml-3">
-            <Button onClick={handleSearch}>Search</Button>
-          </div>
+      {/* main content */}
+      <div className="w-full flex flex-col max-w-5xl">
+        {/* search bar */}
+        <div className="flex items-center justify-between  mb-8">
+          <div className="font-semibold text-2xl">{searchMessage}</div>
+          <SearchBar
+            inputValue={searchValue}
+            setInputValue={setSearchValue}
+            placeholder="Find Pokémon"
+            searchFunction={handleSearch}
+            disabled={isLoading}
+          />
+        </div>
+        {/* pokemon grid */}
+        <div className="mb-8">
+          {isLoading ? (
+            <div className="h-[1100px] flex">
+              <div className=" m-auto">
+                <LoadingSpinner />
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-4 max-w-fit gap-x-4 gap-y-8">
+              {displayedPokemons.map((data, index) => (
+                <PokemonCard
+                  key={index}
+                  name={data.name}
+                  imageUrl={data.imageUrl !== null ? data.imageUrl : ""}
+                  number={"#" + data.id.toString().padStart(4, "0")}
+                  types={data.types}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+        {/* page switcher */}
+        <div className="m-8 flex justify-center">
+          <PageSwitcher
+            totalItems={pokemonList.length}
+            itemsPerPage={12}
+            pageNumber={pageNumber}
+            setPageNumber={setPageNumber}
+            disabled={isLoading}
+          />
         </div>
       </div>
-      {/* pokemon grid */}
-      <div className="grid grid-cols-4 max-w-fit gap-x-4 gap-y-8">
-        {pokemons.map((data, index) => (
-          <PokemonCard
-            key={index}
-            name={data.name}
-            imageUrl={data.imageUrl}
-            number={"#" + data.id.toString().padStart(4, "0")}
-            types={data.types}
-          />
-        ))}
-      </div>
-      {/* page switcher */}
-      <div className="mt-8 flex">
-        <PageSwitcher
-          next={next}
-          previous={back}
-          pageNumber={pageNumber}
-          setPageNumber={setPageNumber}
-        />
-      </div>
       {/* footer */}
-      <div className="flex flex-col border-t items-center mt-8 w-full">
+      <div className="flex flex-col border-t items-center mt-auto w-full">
         <h2 className="font-semibold  text-md mt-28 mb-16">
           Thank you for using Pokémon Browser!
         </h2>

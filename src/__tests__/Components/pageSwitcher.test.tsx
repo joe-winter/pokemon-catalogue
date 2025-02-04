@@ -3,7 +3,15 @@ import { render, screen } from "@testing-library/react";
 import userEvent from '@testing-library/user-event'
 describe("page switcher", () => {
   it("should have forward and back buttons", () => {
-    render(<PageSwitcher />);
+    const setPageNumber = jest.fn();
+    render(
+      <PageSwitcher
+      totalItems={1000}
+      itemsPerPage={12}
+      pageNumber={5}
+      setPageNumber={setPageNumber}
+      />
+    );
 
     const nextButtonEl = screen.getByRole("button", { name: "Next" });
     expect(nextButtonEl).toBeInTheDocument();
@@ -16,8 +24,8 @@ describe("page switcher", () => {
     const setPageNumber = jest.fn();
     render(
       <PageSwitcher
-      next={true}
-      previous={true}
+      totalItems={1000}
+      itemsPerPage={12}
       pageNumber={5}
       setPageNumber={setPageNumber}
       />
@@ -31,13 +39,30 @@ describe("page switcher", () => {
     await user.click(backButtonEl)
     expect(setPageNumber).toHaveBeenLastCalledWith(4)
   });
-  it("should disable buttons depending on props", () => {
+  it("should disable back button if page number is 0", () => {
     const setPageNumber = jest.fn();
     render(
       <PageSwitcher
-      next={false}
-      previous={false}
-      pageNumber={5}
+      totalItems={1000}
+      itemsPerPage={12}
+      pageNumber={0}
+      setPageNumber={setPageNumber}
+      />
+    );
+
+    const nextButtonEl = screen.getByRole("button", { name: "Next" });
+    expect(nextButtonEl).toBeEnabled();
+
+    const backButtonEl = screen.getByRole("button", { name: "Back" });
+    expect(backButtonEl).toBeDisabled();
+  })
+  it("should disable next button if the page number is the final page", () => {
+    const setPageNumber = jest.fn();
+    render(
+      <PageSwitcher
+      totalItems={23}
+      itemsPerPage={12}
+      pageNumber={1}
       setPageNumber={setPageNumber}
       />
     );
@@ -46,6 +71,6 @@ describe("page switcher", () => {
     expect(nextButtonEl).toBeDisabled();
 
     const backButtonEl = screen.getByRole("button", { name: "Back" });
-    expect(backButtonEl).toBeDisabled();
+    expect(backButtonEl).toBeEnabled();
   })
 });

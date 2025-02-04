@@ -19,7 +19,7 @@ export default function PokemonCard({
   types,
 }: PokemonCardProps) {
   return (
-    <div className="max-w-fit">
+    <div className="max-w-64">
       <Card>
         <div className="bg-gray-100 rounded-t-xl">
           <CardContent>
@@ -33,7 +33,7 @@ export default function PokemonCard({
           </CardContent>
         </div>
         <CardContent>
-          <h2 className="font-bold text-xl pt-3">{capitalizeString(name)}</h2>
+          <h2 className="font-bold text-xl pt-3 text-nowrap overflow-hidden">{capitalizeString(name)}</h2>
           <div className="text-gray-500 text-sm mb-6">{number}</div>
           <div className="flex">
             {types &&
