@@ -47,6 +47,7 @@ export default function Home() {
   // fetch pokemon data for each url in the pokemon list
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
         const response = await PokemonService.getPokemonFromList(
           pokemonList.slice(12 * pageNumber, 12 * (pageNumber + 1))
@@ -61,9 +62,12 @@ export default function Home() {
     fetchData();
   }, [pageNumber, pokemonList]);
 
+  console.log(pokemonList.length)
+
   // when user searches set pokemon list to filtered list
   const handleSearch = async () => {
     if (searchValue !== "") {
+      setPageNumber(0)
       const filteredList = initialPokemonList.filter((pokemon) =>
         pokemon.name.toLowerCase().includes(searchValue.toLowerCase())
       );
@@ -91,6 +95,7 @@ export default function Home() {
             setInputValue={setSearchValue}
             placeholder="Find Pokémon"
             searchFunction={handleSearch}
+            disabled={isLoading}
           />
         </div>
         {/* pokemon grid */}
@@ -122,6 +127,7 @@ export default function Home() {
             itemsPerPage={12}
             pageNumber={pageNumber}
             setPageNumber={setPageNumber}
+            disabled={isLoading}
           />
         </div>
       </div>

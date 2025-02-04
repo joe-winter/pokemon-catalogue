@@ -5,17 +5,24 @@ interface PageSwitcherProps {
   totalItems: number;
   itemsPerPage: number;
   pageNumber: number;
-  setPageNumber: Dispatch<SetStateAction<number>>
+  setPageNumber: Dispatch<SetStateAction<number>>;
+  disabled?: boolean;
 }
 
-export default function PageSwitcher({totalItems, itemsPerPage, pageNumber, setPageNumber}: PageSwitcherProps) {
+export default function PageSwitcher({
+  totalItems,
+  itemsPerPage,
+  pageNumber,
+  setPageNumber,
+  disabled,
+}: PageSwitcherProps) {
   return (
     <>
-    {/* back button to be disabled when page number is zero */}
+      {/* back button to be disabled when page number is zero */}
       <div className="px-2 max-h-2">
         <Button
           className="text-xs"
-          disabled={pageNumber < 1}
+          disabled={pageNumber < 1 || disabled}
           onClick={() => setPageNumber(pageNumber - 1)}
         >
           <span>
@@ -42,7 +49,9 @@ export default function PageSwitcher({totalItems, itemsPerPage, pageNumber, setP
       <div className="px-2">
         <Button
           className="text-xs"
-          disabled={pageNumber === Math.ceil(totalItems/itemsPerPage) - 1}
+          disabled={
+            pageNumber === Math.ceil(totalItems / itemsPerPage) - 1 || disabled
+          }
           onClick={() => setPageNumber(pageNumber + 1)}
         >
           Next

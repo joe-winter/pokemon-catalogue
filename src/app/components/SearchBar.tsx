@@ -6,14 +6,16 @@ interface SearchBarProps {
   inputValue: string;
   setInputValue: Dispatch<SetStateAction<string>>;
   placeholder?: string;
-  searchFunction: () => void
+  searchFunction: () => void;
+  disabled?: boolean;
 }
 
 export default function SearchBar({
   inputValue,
   setInputValue,
   placeholder = "Search Here",
-  searchFunction
+  searchFunction,
+  disabled = false,
 }: SearchBarProps) {
   return (
     <div className="flex">
@@ -27,7 +29,9 @@ export default function SearchBar({
         />
       </div>
       <div className="ml-3">
-        <Button onClick={searchFunction}>Search</Button>
+        <Button onClick={searchFunction} disabled={disabled}>
+          Search
+        </Button>
       </div>
     </div>
   );
