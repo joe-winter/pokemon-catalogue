@@ -1,11 +1,10 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import PokemonCard from "./components/PokemonCard";
 import PokemonService from "./services/pokemonService";
 import PageSwitcher from "./components/PageSwitcher";
 import SearchBar from "./components/SearchBar";
 
-// import { MoveRight } from "lucide-react";
 interface Pokemon {
   name: string;
   imageUrl: string;
@@ -19,21 +18,24 @@ interface PokemonUrl {
 }
 
 export default function Home() {
-  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
+  const [displayedPokemons, setDisplayedPokemons] = useState<Pokemon[]>([]);
   const [pageNumber, setPageNumber] = useState(0);
-  const [pokemonList, setPokemonList] = useState<PokemonUrl[]>([
+  const [initialPokemonList, setInitialPokemonList] = useState<PokemonUrl[]>([
+    { name: "", url: "" },
+  ]);
+  const [pokemonList, setpokemonList] = useState<PokemonUrl[]>([
     { name: "", url: "" },
   ]);
   const [searchValue, setSearchValue] = useState("");
   const [searchMessage, setSearchMessage] = useState("Explore Pokémon");
-  const [search, setSearch] = useState(false);
 
-  // fetch list of pokemon names and urls on initial page load
+  // fetch complete list of pokemon names and urls on initial page load
   useEffect(() => {
     const fetchData = async () => {
       try {
         const pokemonData = await PokemonService.getAllPokemon();
-        setPokemonList(pokemonData);
+        setInitialPokemonList(pokemonData);
+        setpokemonList(pokemonData)
       } catch (err) {
         console.log(err);
       }
@@ -41,42 +43,29 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // when the search value is changed the list of urls is filtered
-  const filteredList = useMemo(() => {
-    return pokemonList.filter((pokemon) =>
-      pokemon.name.toLowerCase().includes(searchValue.toLowerCase())
-    );
-  }, [pokemonList, searchValue]);
-
-  // fetch pokemon data for each url in the url list or filtered url list
+  // fetch pokemon data for each url in the pokemon list
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const list = search ? filteredList : pokemonList;
-        const response = await PokemonService.getPokemonFromList(
-          list.slice(12 * pageNumber, 12 * (pageNumber + 1))
-        );
-        setPokemons(response);
+          const response = await PokemonService.getPokemonFromList(
+            pokemonList.slice(12 * pageNumber, 12 * (pageNumber + 1))
+          )
+          setDisplayedPokemons(response)
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
-  }, [filteredList, pageNumber, pokemonList, search]);
+  }, [pageNumber, pokemonList]);
 
-  // when user searches fetch data from filtered url list and update search status
+  // when user searches set pokemon list to filtered list
   const handleSearch = async () => {
-    console.log("hello")
     if (searchValue !== "") {
-      const filteredList = pokemonList.filter((pokemon) =>
+      const filteredList = initialPokemonList.filter((pokemon) =>
         pokemon.name.toLowerCase().includes(searchValue.toLowerCase())
       );
-      const response = await PokemonService.getPokemonFromList(
-        filteredList.slice(12 * pageNumber, 12 * (pageNumber + 1))
-      );
-      setPokemons(response);
+      setpokemonList(filteredList)
       setSearchMessage(`Search results for "${searchValue}"`);
-      setSearch(true);
     }
   };
 
@@ -101,7 +90,7 @@ export default function Home() {
       </div>
       {/* pokemon grid */}
       <div className="grid grid-cols-4 max-w-fit gap-x-4 gap-y-8">
-        {pokemons.map((data, index) => (
+        {displayedPokemons.map((data, index) => (
           <PokemonCard
             key={index}
             name={data.name}
