@@ -9,7 +9,6 @@ interface PageSwitcherProps {
 }
 
 export default function PageSwitcher({totalItems, itemsPerPage, pageNumber, setPageNumber}: PageSwitcherProps) {
-  console.log("disabled next button ", pageNumber === Math.ceil(totalItems/itemsPerPage) - 1)
   return (
     <>
     {/* back button to be disabled when page number is zero */}

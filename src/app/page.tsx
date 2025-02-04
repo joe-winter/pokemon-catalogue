@@ -1,10 +1,9 @@
 "use client";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PokemonCard from "./components/PokemonCard";
 import PokemonService from "./services/pokemonService";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import PageSwitcher from "./components/PageSwitcher";
+import SearchBar from "./components/SearchBar";
 
 // import { MoveRight } from "lucide-react";
 interface Pokemon {
@@ -67,6 +66,7 @@ export default function Home() {
 
   // when user searches fetch data from filtered url list and update search status
   const handleSearch = async () => {
+    console.log("hello")
     if (searchValue !== "") {
       const filteredList = pokemonList.filter((pokemon) =>
         pokemon.name.toLowerCase().includes(searchValue.toLowerCase())
@@ -92,20 +92,12 @@ export default function Home() {
       {/* search bar */}
       <div className="flex items-center justify-between w-full px-44 mb-8">
         <div className="font-semibold text-2xl">{searchMessage}</div>
-        <div className="flex">
-          <div className="">
-            <Input
-              placeholder="Find Pokémon"
-              value={searchValue}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setSearchValue(e.target.value);
-              }}
-            />
-          </div>
-          <div className="ml-3">
-            <Button onClick={handleSearch}>Search</Button>
-          </div>
-        </div>
+        <SearchBar
+          inputValue={searchValue}
+          setInputValue={setSearchValue}
+          placeholder="Find Pokémon"
+          searchFunction={handleSearch}
+        />
       </div>
       {/* pokemon grid */}
       <div className="grid grid-cols-4 max-w-fit gap-x-4 gap-y-8">
