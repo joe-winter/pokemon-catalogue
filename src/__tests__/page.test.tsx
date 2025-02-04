@@ -1,10 +1,23 @@
-import Home from '@/app/page'
-import '@testing-library/jest-dom'
-import { render, screen} from '@testing-library/react'
+import Home from "@/app/page";
+import { render, screen } from "@testing-library/react";
+import PokemonService from "@/app/services/pokemonService";
+import { act } from "react";
 
+jest.mock("../app/services/pokemonService.ts");
+describe("Home", () => {
+  it("calls pokemonservice when page loads", () => {
+    act(() => {
+      render(<Home />);
+    });
+    expect(PokemonService.getPokemonFromList).toHaveBeenCalledWith([{"name": "", "url": ""}]);
+  });
+  it("has back and next buttons", () => {
+    render(<Home />);
 
-describe('Home', () => {
-    it('is true', () => {
-        expect(true).toBe(true)
-    })
-})
+    const nextButtonEl = screen.getByRole('button', {name: 'Next'})
+    expect(nextButtonEl).toBeInTheDocument()
+
+    const backButtonEl = screen.getByRole('button', {name: 'Back'})
+    expect(backButtonEl).toBeInTheDocument()
+  })
+});

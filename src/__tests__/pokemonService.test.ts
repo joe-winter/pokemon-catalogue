@@ -20,7 +20,7 @@ describe("pokemon service", () => {
         id: 1,
         name: "bulbasaur",
         sprites: { front_default: "exampleUrl" },
-        types: [{ name: "grass" }, { name: "poison" }],
+        types: [{type: { name: "grass" }}, {type: { name: "poison" }}],
       })
     );
     fetchMock.mockResponseOnce(
@@ -28,7 +28,7 @@ describe("pokemon service", () => {
         id: 2,
         name: "bulbasaur",
         sprites: { front_default: "exampleUrl" },
-        types: [{ name: "grass" }, { name: "poison" }],
+        types: [{type: { name: "grass" }}, {type: { name: "poison" }}],
       })
     );
     fetchMock.mockResponseOnce(
@@ -36,19 +36,19 @@ describe("pokemon service", () => {
         id: 3,
         name: "bulbasaur",
         sprites: { front_default: "exampleUrl" },
-        types: [{ name: "grass" }, { name: "poison" }],
+        types: [{type: { name: "grass" }}, {type: { name: "poison" }}],
       })
     );
   });
   it("includes two query parameters and correct url in its request", async () => {
-    const response = await PokemonService.getPokemonList(3, 0);
+    await PokemonService.getPokemonPerPage(3, 0);
     expect(fetchMock).toHaveBeenCalledWith(
       "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=3",
       { method: "GET" }
     );
   });
   it("calls a fetch for each pokemon in the list", async () => {
-    const response = await PokemonService.getPokemonList(3, 0);
+    await PokemonService.getPokemonPerPage(3, 0);
     expect(fetchMock).toHaveBeenCalledTimes(4);
     expect(fetchMock).toHaveBeenNthCalledWith(
       2,
@@ -58,13 +58,24 @@ describe("pokemon service", () => {
   });
   it("returns pokemon details", async () => {
 
-    const response = await PokemonService.getPokemonList(3, 0);
+    const response = await PokemonService.getPokemonPerPage(3, 0);
 
-    expect(response[0]).toMatchObject({
+    expect(response.pokemonList[0]).toMatchObject({
       name: 'bulbasaur',
       imageUrl: "exampleUrl",
       id: 1,
       types: ["grass", "poison"]
     })
   });
+  it("returns the next and previous value", async () => {
+    const response = await PokemonService.getPokemonPerPage(3, 0);
+
+    expect(response.next).toEqual(true)
+    expect(response.previous).toEqual(false)
+  })
+  it("returns a list of pokemon urls", async () => {
+    const response = await PokemonService.getAllPokemon()
+
+    expect(response[0]).toMatchObject({ name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" })
+  })
 });
