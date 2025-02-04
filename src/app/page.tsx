@@ -28,8 +28,6 @@ export default function Home() {
   const [searchValue, setSearchValue] = useState("");
   const [searchMessage, setSearchMessage] = useState("Explore Pokémon");
   const [search, setSearch] = useState(false);
-  const [next, setNext] = useState(true);
-  const [back, setBack] = useState(true);
 
   // fetch list of pokemon names and urls on initial page load
   useEffect(() => {
@@ -60,9 +58,6 @@ export default function Home() {
           list.slice(12 * pageNumber, 12 * (pageNumber + 1))
         );
         setPokemons(response);
-        const totalPages = Math.ceil(list.length / 12);
-        setBack(pageNumber !== 0);
-        setNext(pageNumber < totalPages - 1);
       } catch (err) {
         console.log(err);
       }
@@ -73,13 +68,13 @@ export default function Home() {
   // when user searches fetch data from filtered url list and update search status
   const handleSearch = async () => {
     if (searchValue !== "") {
+      const filteredList = pokemonList.filter((pokemon) =>
+        pokemon.name.toLowerCase().includes(searchValue.toLowerCase())
+      );
       const response = await PokemonService.getPokemonFromList(
         filteredList.slice(12 * pageNumber, 12 * (pageNumber + 1))
       );
       setPokemons(response);
-      setBack(pageNumber !== 0);
-      const totalPages = Math.ceil(filteredList.length / 12);
-      setNext(pageNumber < totalPages - 1);
       setSearchMessage(`Search results for "${searchValue}"`);
       setSearch(true);
     }
@@ -127,8 +122,8 @@ export default function Home() {
       {/* page switcher */}
       <div className="mt-8 flex">
         <PageSwitcher
-          next={next}
-          previous={back}
+          totalItems={pokemonList.length}
+          itemsPerPage={12}
           pageNumber={pageNumber}
           setPageNumber={setPageNumber}
         />
