@@ -7,6 +7,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import StatsCard from "../components/StatsCard";
+import BadgeListCard from "../components/BadgeListCard";
+import GeneralDetailsCard from "../components/GeneralDetailsCard";
 
 interface PokemonDetails {
   name: string;
@@ -79,6 +81,13 @@ export default function Page({
     fetchData();
   }, [params]);
 
+  const details = [
+    { heading: "Height", value: `${pokemon.height}m` },
+    { heading: "Category", value: `${pokemon.category}` },
+    { heading: "Weight", value: `${pokemon.weight}kg` },
+    { heading: "Gender", value: `${pokemon.gender}` },
+  ];
+
   const stats = [
     { name: "HP", value: pokemon.stats.hp },
     { name: "Attack", value: pokemon.stats.attack },
@@ -87,6 +96,12 @@ export default function Page({
     { name: "Special Defence", value: pokemon.stats.hp },
     { name: "Speed", value: pokemon.stats.hp },
   ];
+
+  const categories = [
+    { heading: "type", badges: pokemon.type },
+    { heading: "weaknesses", badges: pokemon.weaknesses },
+  ];
+
   return (
     <div className="font-[family-name:var(--font-geist-sans)]">
       <h1 className="font-semibold text-2xl my-6 pl-16">Pokemon Browser</h1>
@@ -110,73 +125,27 @@ export default function Page({
       </div>
       <div className="max-w-5xl m-auto">
         <div className="m-auto">
-          <Card className="my-8 bg-gray-300">
-            <CardContent className="m-2">
+          <Card className="my-8 bg-gray-100 shadow-lg border-2">
+            <CardContent className="px-12 py-4">
               <div className="flex items-center">
                 <Image
+                  className="bg-white rounded-full border"
                   src={"/cherish-ball.png"}
                   quality={100}
                   alt="cherish-ball"
-                  width={50}
-                  height={50}
+                  width={80}
+                  height={80}
                 />
-                <div>{pokemon.entry}</div>
+                <div className="p-4">{pokemon.entry}</div>
               </div>
             </CardContent>
           </Card>
           <div className="grid grid-cols-3 grid-rows-2 gap-4">
-            <Card className="row-span-2 px-2 pt-8">
-              <CardContent>
-                <h3 className="text-2xl font-semibold">Height</h3>
-                <div className="text-xl pt-2">{pokemon.height}m</div>
-              </CardContent>
-              <CardContent>
-                <h3 className="text-2xl font-semibold">Category</h3>
-                <div className="text-xl pt-2">{pokemon.category}</div>
-              </CardContent>
-              <CardContent>
-                <h3 className="text-2xl font-semibold">Weight</h3>
-                <div className="text-xl pt-2">{pokemon.weight}</div>
-              </CardContent>
-              <CardContent>
-                <h3 className="text-2xl font-semibold">Gender</h3>
-                <div className="text-xl pt-2">{pokemon.gender}</div>
-              </CardContent>
-            </Card>
-            <Card className="px-2 pt-8">
-              <CardContent>
-                <h3 className="text-2xl font-semibold">Type</h3>
-                <div className="flex pt-3">
-                  {pokemon.type &&
-                    pokemon.type.map((type, index) => (
-                      <div
-                        className="bg-black max-w-fit rounded mr-3"
-                        key={index}
-                      >
-                        <div className="px-2 py-0.5 text-white text-[10px]">
-                          {capitalizeString(type)}
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-              <CardContent className="pt-2">
-                <h3 className="text-2xl font-semibold">Weaknesses</h3>
-                <div className="flex pt-3">
-                  {pokemon.weaknesses &&
-                    pokemon.weaknesses.map((type, index) => (
-                      <div
-                        className="bg-black max-w-fit rounded mr-3"
-                        key={index}
-                      >
-                        <div className="px-2 py-0.5 text-white text-[10px]">
-                          {capitalizeString(type)}
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
+            <GeneralDetailsCard
+              className="row-span-2 px-2 pt-8"
+              details={details}
+            />
+            <BadgeListCard categories={categories} className="px-2 pt-8" />
             <Card>
               <CardContent>
                 <h3>Ability</h3>
@@ -188,28 +157,28 @@ export default function Page({
             <StatsCard className="col-span-2 py-6" stats={stats} />
           </div>
         </div>
-      </div>
-      <div className="px-2">
-        <Button className="text-xs">
-          <span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="lucide lucide-move-left"
-            >
-              <path d="M6 8L2 12L6 16" />
-              <path d="M2 12H22" />
-            </svg>
-          </span>
-          Back
-        </Button>
+        <div className="my-8">
+          <Button className="text-xs">
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-move-left"
+              >
+                <path d="M6 8L2 12L6 16" />
+                <path d="M2 12H22" />
+              </svg>
+            </span>
+            Return Home
+          </Button>
+        </div>
       </div>
       {/* footer */}
       <div className="flex flex-col border-t items-center mt-auto w-full">
