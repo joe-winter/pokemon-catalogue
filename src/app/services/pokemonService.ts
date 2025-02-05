@@ -132,7 +132,7 @@ export default class PokemonService {
     return types.map((type) => type.type.name);
   }
 
-  public static async getEntry(speciesUrl: string) {
+  public static async getEntry(speciesUrl: string): Promise<string> {
     const response = await fetch(speciesUrl, { method: "GET" });
     const data = await response.json();
     const entry = data.flavor_text_entries?.[0].flavor_text.replace(
@@ -163,7 +163,7 @@ export default class PokemonService {
     const category = genus[0].genus.split(" ")[0];
     return category;
   }
-  public static async getAbility(abilityUrl: string) {
+  public static async getAbility(abilityUrl: string): Promise<string> {
     const response = await fetch(abilityUrl, { method: "GET" });
     const data = await response.json();
     const entry = data.flavor_text_entries?.[0].flavor_text.replace(

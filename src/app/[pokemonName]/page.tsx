@@ -4,7 +4,6 @@ import PokemonService from "../services/pokemonService";
 import Image from "next/image";
 import { capitalizeString } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import StatsCard from "../components/StatsCard";
 import BadgeListCard from "../components/BadgeListCard";
@@ -18,7 +17,7 @@ interface PokemonDetails {
   height: number;
   category: string;
   weight: number;
-  gender: string[];
+  gender: string;
   type: string[];
   weaknesses: string[];
   ability: {
@@ -34,6 +33,7 @@ interface PokemonDetails {
     speed: number;
   };
 }
+
 
 const emptyPokemon = {
   name: "",
@@ -71,9 +71,39 @@ export default function Page({
     const fetchData = async () => {
       try {
         const pokemonName = (await params).pokemonName;
-        const pokemonData = await PokemonService.getPokemon(pokemonName);
-        console.log(pokemonData);
-        setPokemon(pokemonData);
+        const pokemonBasicData = await PokemonService.getPokemon(pokemonName);
+        const weaknesses = await PokemonService.getWeaknesses(pokemonBasicData.types)
+        const gender = await PokemonService.getGender(pokemonBasicData.species)
+        const ability = await PokemonService.getAbility(pokemonBasicData.ability.url)
+        const entry = await PokemonService.getEntry(pokemonBasicData.species)
+        const category = await PokemonService.getCategory(pokemonBasicData.species)
+        const types = PokemonService.getTypes(pokemonBasicData.types)
+
+        const pokemon = {
+          name: pokemonBasicData.name,
+          id: pokemonBasicData.id,
+          imageUrl: pokemonBasicData.imageUrl,
+          entry: entry,
+          height: pokemonBasicData.height,
+          category: category,
+          weight: pokemonBasicData.weight,
+          gender: gender,
+          type: types,
+          weaknesses: weaknesses,
+          ability: {
+            name: pokemonBasicData.ability.name,
+            description: ability,
+          },
+          stats: {
+            hp: pokemonBasicData.stats.hp,
+            attack: pokemonBasicData.stats.attack,
+            defense: pokemonBasicData.stats.defense,
+            specialAttack: pokemonBasicData.stats.specialAttack,
+            specialDefence: pokemonBasicData.stats.specialDefence,
+            speed: pokemonBasicData.stats.speed,
+          },
+        };
+        setPokemon(pokemon);
       } catch (err) {
         console.log(err);
       }
@@ -146,14 +176,13 @@ export default function Page({
               details={details}
             />
             <BadgeListCard categories={categories} className="px-2 pt-8" />
-            <Card>
+            <Card className="px-2 pt-8">
               <CardContent>
-                <h3>Ability</h3>
-                <div>{pokemon.ability.name}</div>
-                <div>{pokemon.ability.description}</div>
+                <h3 className="text-2xl font-semibold">Ability</h3>
+                <div className="text-xl pt-2">{capitalizeString(pokemon.ability.name)}</div>
+                <div className="text-xl pt-2 italic">{pokemon.ability.description}</div>
               </CardContent>
             </Card>
-
             <StatsCard className="col-span-2 py-6" stats={stats} />
           </div>
         </div>
