@@ -45,13 +45,10 @@ interface PokemonDetails {
   name: string;
   id: number;
   imageUrl: string;
-  entry: string;
   height: number;
   category: string;
   weight: number;
   gender: string[];
-  type: string[];
-  weaknesses: string[];
   ability: {
     name: string;
     description: string;
@@ -84,13 +81,13 @@ export default class PokemonService {
     return res;
   }
 
-  private static async getWeaknesses(types: TypeUrl[]) {
+  public static async getWeaknesses(types: TypeUrl[]) {
     let doubleDamageFrom: string[] = [];
     let halfDamageFrom: string[] = [];
     let noDamageFrom: string[] = [];
     for (const type of types) {
       if (type.type.url) {
-        const response = await fetch(type.type.url);
+        const response = await fetch(type.type.url, { method: "GET" });
         const data = await response.json();
         const damageRelations: DamageRelations = data.damage_relations;
         const doubleDamageFromNames = damageRelations.double_damage_from?.map(
@@ -120,16 +117,22 @@ export default class PokemonService {
     return array2;
   }
 
-  private static getTypes(types: TypeUrl[]) {
+  public static getTypes(types: TypeUrl[]) {
     // converts list of objects into list of strings
     return types.map((type) => type.type.name);
   }
 
-  private static async getEntry (speciesUrl: string) {
-    const response = await fetch(speciesUrl, {method: 'GET'})
-    const data = await response.json()
-    console.log("data", data)
-    return data.flavor_text_entries?.[0].flavor_text
+  public static async getEntry(speciesUrl: string) {
+    const response = await fetch(speciesUrl, { method: "GET" });
+    const data = await response.json();
+    const entry = data.flavor_text_entries?.[0].flavor_text.replace(/[\f\n]+/gm, " ");
+    return entry;
+  }
+  public static async getAbility(abilityUrl: string) {
+    const response = await fetch(abilityUrl, { method: "GET" });
+    const data = await response.json();
+    const entry = data.flavor_text_entries?.[0].flavor_text.replace(/[\f\n]+/gm, " ");
+    return entry;
   }
 
   public static async getAllPokemon() {
@@ -176,9 +179,6 @@ export default class PokemonService {
       category: "",
       weight: basicData.weight / 10,
       gender: [""],
-      type: this.getTypes(basicData.types),
-      weaknesses: await this.getWeaknesses(basicData.types),
-      entry: await this.getEntry(basicData.species.url),
       ability: {
         name: basicData.abilities[0].ability.name,
         description: "",

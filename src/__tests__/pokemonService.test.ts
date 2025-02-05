@@ -83,569 +83,462 @@ describe("pokemon service", () => {
     });
   });
   describe("get single pokemon", () => {
-    beforeEach(() => {
-      fetchMock.resetMocks();
-      fetchMock.mockResponse(
-        JSON.stringify({
-          abilities: [
-            {
-              ability: {
-                name: "overgrow",
-                url: "https://pokeapi.co/api/v2/ability/65/",
+    describe("get general data", () => {
+      beforeEach(() => {
+        fetchMock.resetMocks();
+        fetchMock.mockResponse(
+          JSON.stringify({
+            abilities: [
+              {
+                ability: {
+                  name: "overgrow",
+                  url: "https://pokeapi.co/api/v2/ability/65/",
+                },
               },
-            },
-          ],
-          height: 7,
-          name: "bulbasaur",
-          id: 1,
-          sprites: { front_default: "exampleUrl" },
-          types: [
-            {
-              slot: 1,
-              type: {
-                name: "grass",
-              },
-            },
-            {
-              slot: 2,
-              type: {
-                name: "poison",
-              },
-            },
-          ],
-          weight: 69,
-          species: {
+            ],
+            height: 7,
             name: "bulbasaur",
-            url: "https://pokeapi.co/api/v2/pokemon-species/1/",
-          },
-          stats: [
-            {
-              base_stat: 45,
-              stat: {
-                name: "hp",
+            id: 1,
+            sprites: { front_default: "exampleUrl" },
+            types: [
+              {
+                slot: 1,
+                type: {
+                  name: "grass",
+                },
               },
-            },
-            {
-              base_stat: 49,
-              stat: {
-                name: "attack",
+              {
+                slot: 2,
+                type: {
+                  name: "poison",
+                },
               },
+            ],
+            weight: 69,
+            species: {
+              name: "bulbasaur",
+              url: "https://pokeapi.co/api/v2/pokemon-species/1/",
             },
-            {
-              base_stat: 49,
-              stat: {
-                name: "defense",
+            stats: [
+              {
+                base_stat: 45,
+                stat: {
+                  name: "hp",
+                },
               },
-            },
-            {
-              base_stat: 65,
-              stat: {
-                name: "special-attack",
+              {
+                base_stat: 49,
+                stat: {
+                  name: "attack",
+                },
               },
-            },
-            {
-              base_stat: 65,
-              stat: {
-                name: "special-defense",
+              {
+                base_stat: 49,
+                stat: {
+                  name: "defense",
+                },
               },
-            },
-            {
-              base_stat: 45,
-              stat: {
-                name: "speed",
+              {
+                base_stat: 65,
+                stat: {
+                  name: "special-attack",
+                },
               },
-            },
-          ],
-        })
-      );
+              {
+                base_stat: 65,
+                stat: {
+                  name: "special-defense",
+                },
+              },
+              {
+                base_stat: 45,
+                stat: {
+                  name: "speed",
+                },
+              },
+            ],
+          })
+        );
+      });
+      it("it should have given pokemon in url", async () => {
+        await PokemonService.getPokemon("bulbasaur");
+        expect(fetchMock).toHaveBeenCalledWith(
+          "https://pokeapi.co/api/v2/pokemon/bulbasaur",
+          { method: "GET" }
+        );
+      });
+      it("returns pokemon object with basic data", async () => {
+        const response = await PokemonService.getPokemon("bulbasaur");
+
+        expect(response.name).toEqual("bulbasaur");
+        expect(response.id).toEqual(1);
+        expect(response.imageUrl).toEqual("exampleUrl");
+        expect(response.height).toEqual(0.7);
+        expect(response.weight).toEqual(6.9);
+        expect(response.ability.name).toEqual("overgrow");
+        expect(response.stats.hp).toEqual(45);
+        expect(response.stats.attack).toEqual(49);
+        expect(response.stats.defense).toEqual(49);
+        expect(response.stats.specialAttack).toEqual(65);
+        expect(response.stats.specialDefence).toEqual(65);
+        expect(response.stats.speed).toEqual(45);
+      });
     });
-    it("it should have given pokemon in url", async () => {
-      await PokemonService.getPokemon("bulbasaur");
-      expect(fetchMock).toHaveBeenCalledWith(
-        "https://pokeapi.co/api/v2/pokemon/bulbasaur",
-        { method: "GET" }
-      );
+    describe("get weaknesses", () => {
+      beforeEach(() => {
+        fetchMock.resetMocks();
+        fetchMock.mockResponseOnce(
+          JSON.stringify({
+            damage_relations: {
+              double_damage_from: [
+                {
+                  name: "flying",
+                  url: "https://pokeapi.co/api/v2/type/3/",
+                },
+                {
+                  name: "poison",
+                  url: "https://pokeapi.co/api/v2/type/4/",
+                },
+                {
+                  name: "bug",
+                  url: "https://pokeapi.co/api/v2/type/7/",
+                },
+                {
+                  name: "fire",
+                  url: "https://pokeapi.co/api/v2/type/10/",
+                },
+                {
+                  name: "ice",
+                  url: "https://pokeapi.co/api/v2/type/15/",
+                },
+              ],
+              half_damage_from: [
+                {
+                  name: "ground",
+                  url: "https://pokeapi.co/api/v2/type/5/",
+                },
+                {
+                  name: "water",
+                  url: "https://pokeapi.co/api/v2/type/11/",
+                },
+                {
+                  name: "grass",
+                  url: "https://pokeapi.co/api/v2/type/12/",
+                },
+                {
+                  name: "electric",
+                  url: "https://pokeapi.co/api/v2/type/13/",
+                },
+              ],
+            },
+          })
+        );
+        fetchMock.mockResponseOnce(
+          JSON.stringify({
+            damage_relations: {
+              double_damage_from: [
+                {
+                  name: "ground",
+                  url: "https://pokeapi.co/api/v2/type/5/",
+                },
+                {
+                  name: "psychic",
+                  url: "https://pokeapi.co/api/v2/type/14/",
+                },
+              ],
+              half_damage_from: [
+                {
+                  name: "fighting",
+                  url: "https://pokeapi.co/api/v2/type/2/",
+                },
+                {
+                  name: "poison",
+                  url: "https://pokeapi.co/api/v2/type/4/",
+                },
+                {
+                  name: "bug",
+                  url: "https://pokeapi.co/api/v2/type/7/",
+                },
+                {
+                  name: "grass",
+                  url: "https://pokeapi.co/api/v2/type/12/",
+                },
+                {
+                  name: "fairy",
+                  url: "https://pokeapi.co/api/v2/type/18/",
+                },
+              ],
+            },
+          })
+        );
+      });
+      it("it should have given type in url", async () => {
+        await PokemonService.getWeaknesses([
+          {
+            type: {
+              name: "grass",
+              url: "https://pokeapi.co/api/v2/type/12/",
+            },
+          },
+        ]);
+        expect(fetchMock).toHaveBeenCalledWith(
+          "https://pokeapi.co/api/v2/type/12/",
+          { method: "GET" }
+        );
+      });
+      it("should return bulbasaurs weaknesses", async () => {
+        const types = [
+          {
+            slot: 1,
+            type: {
+              name: "grass",
+              url: "https://pokeapi.co/api/v2/type/12/",
+            },
+          },
+          {
+            slot: 2,
+            type: {
+              name: "poison",
+              url: "https://pokeapi.co/api/v2/type/4/",
+            },
+          },
+        ];
+        const response = await PokemonService.getWeaknesses(types);
+
+        expect(response.sort()).toEqual(
+          ["fire", "flying", "psychic", "ice"].sort()
+        );
+      });
+      it("given only one type returns weaknesses", async () => {
+        const types = [
+          {
+            slot: 1,
+            type: {
+              name: "grass",
+              url: "https://pokeapi.co/api/v2/type/12/",
+            },
+          },
+        ];
+        const response = await PokemonService.getWeaknesses(types);
+
+        expect(response.sort()).toEqual(
+          ["fire", "flying", "poison", "ice", "bug"].sort()
+        );
+      });
+      it("returns weaknesses given one type is immune and another type is weak", async () => {
+        fetchMock.resetMocks();
+        fetchMock.mockResponseOnce(
+          JSON.stringify({
+            damage_relations: {
+              double_damage_from: [
+                {
+                  name: "flying",
+                  url: "https://pokeapi.co/api/v2/type/3/",
+                },
+                {
+                  name: "poison",
+                  url: "https://pokeapi.co/api/v2/type/4/",
+                },
+                {
+                  name: "bug",
+                  url: "https://pokeapi.co/api/v2/type/7/",
+                },
+                {
+                  name: "fire",
+                  url: "https://pokeapi.co/api/v2/type/10/",
+                },
+                {
+                  name: "ice",
+                  url: "https://pokeapi.co/api/v2/type/15/",
+                },
+              ],
+              half_damage_from: [
+                {
+                  name: "ground",
+                  url: "https://pokeapi.co/api/v2/type/5/",
+                },
+                {
+                  name: "water",
+                  url: "https://pokeapi.co/api/v2/type/11/",
+                },
+                {
+                  name: "grass",
+                  url: "https://pokeapi.co/api/v2/type/12/",
+                },
+                {
+                  name: "electric",
+                  url: "https://pokeapi.co/api/v2/type/13/",
+                },
+              ],
+              no_damage_from: [
+                {
+                  name: "psychic",
+                  url: "https://pokeapi.co/api/v2/type/14/",
+                },
+              ],
+            },
+          })
+        );
+        fetchMock.mockResponseOnce(
+          JSON.stringify({
+            damage_relations: {
+              double_damage_from: [
+                {
+                  name: "ground",
+                  url: "https://pokeapi.co/api/v2/type/5/",
+                },
+                {
+                  name: "psychic",
+                  url: "https://pokeapi.co/api/v2/type/14/",
+                },
+              ],
+              half_damage_from: [
+                {
+                  name: "fighting",
+                  url: "https://pokeapi.co/api/v2/type/2/",
+                },
+                {
+                  name: "poison",
+                  url: "https://pokeapi.co/api/v2/type/4/",
+                },
+                {
+                  name: "bug",
+                  url: "https://pokeapi.co/api/v2/type/7/",
+                },
+                {
+                  name: "grass",
+                  url: "https://pokeapi.co/api/v2/type/12/",
+                },
+                {
+                  name: "fairy",
+                  url: "https://pokeapi.co/api/v2/type/18/",
+                },
+              ],
+            },
+          })
+        );
+        const types = [
+          {
+            slot: 1,
+            type: {
+              name: "grass",
+              url: "https://pokeapi.co/api/v2/type/12/",
+            },
+          },
+          {
+            slot: 2,
+            type: {
+              name: "poison",
+              url: "https://pokeapi.co/api/v2/type/4/",
+            },
+          },
+        ];
+        const response = await PokemonService.getWeaknesses(types);
+
+        expect(response.sort()).toEqual(["fire", "flying", "ice"].sort());
+      });
     });
-    it("returns pokemon object with basic data", async () => {
-      const response = await PokemonService.getPokemon("bulbasaur");
+    describe("get types", () => {
+      it("should return types as a list", () => {
+        const types = [
+          {
+            slot: 1,
+            type: {
+              name: "grass",
+              url: "https://pokeapi.co/api/v2/type/12/",
+            },
+          },
+          {
+            slot: 2,
+            type: {
+              name: "poison",
+              url: "https://pokeapi.co/api/v2/type/4/",
+            },
+          },
+        ];
+        const response = PokemonService.getTypes(types);
 
-      expect(response.name).toEqual("bulbasaur");
-      expect(response.id).toEqual(1);
-      expect(response.imageUrl).toEqual("exampleUrl");
-      expect(response.height).toEqual(0.7);
-      expect(response.weight).toEqual(6.9);
-      expect(response.type).toEqual(["grass", "poison"]);
-      expect(response.ability.name).toEqual("overgrow");
-      expect(response.stats.hp).toEqual(45);
-      expect(response.stats.attack).toEqual(49);
-      expect(response.stats.defense).toEqual(49);
-      expect(response.stats.specialAttack).toEqual(65);
-      expect(response.stats.specialDefence).toEqual(65);
-      expect(response.stats.speed).toEqual(45);
+        expect(response.sort()).toEqual(["grass", "poison"].sort());
+      });
     });
-    it("should return bulbasaurs weaknesses", async () => {
-      fetchMock.resetMocks();
-      fetchMock.mockResponseOnce(
-        JSON.stringify({
-          abilities: [
-            {
-              ability: {
-                name: "overgrow",
-                url: "https://pokeapi.co/api/v2/ability/65/",
-              },
-            },
-          ],
-          height: 7,
-          name: "bulbasaur",
-          id: 1,
-          sprites: { front_default: "exampleUrl" },
-          types: [
-            {
-              slot: 1,
-              type: {
-                name: "grass",
-                url: "https://pokeapi.co/api/v2/type/12/",
-              },
-            },
-            {
-              slot: 2,
-              type: {
-                name: "poison",
-                url: "https://pokeapi.co/api/v2/type/4/",
-              },
-            },
-          ],
-          weight: 69,
-          species: {
-            name: "bulbasaur",
-            url: "https://pokeapi.co/api/v2/pokemon-species/1/",
-          },
-          stats: [
-            {
-              base_stat: 45,
-              stat: {
-                name: "hp",
-              },
-            },
-            {
-              base_stat: 49,
-              stat: {
-                name: "attack",
-              },
-            },
-            {
-              base_stat: 49,
-              stat: {
-                name: "defense",
-              },
-            },
-            {
-              base_stat: 65,
-              stat: {
-                name: "special-attack",
-              },
-            },
-            {
-              base_stat: 65,
-              stat: {
-                name: "special-defense",
-              },
-            },
-            {
-              base_stat: 45,
-              stat: {
-                name: "speed",
-              },
-            },
-          ],
-        })
-      );
-      fetchMock.mockResponseOnce(
-        JSON.stringify({
-          damage_relations: {
-            double_damage_from: [
+    describe("get entry", () => {
+      beforeEach(() => {
+        fetchMock.resetMocks();
+        fetchMock.mockResponseOnce(
+          JSON.stringify({
+            flavor_text_entries: [
               {
-                name: "flying",
-                url: "https://pokeapi.co/api/v2/type/3/",
-              },
-              {
-                name: "poison",
-                url: "https://pokeapi.co/api/v2/type/4/",
-              },
-              {
-                name: "bug",
-                url: "https://pokeapi.co/api/v2/type/7/",
-              },
-              {
-                name: "fire",
-                url: "https://pokeapi.co/api/v2/type/10/",
-              },
-              {
-                name: "ice",
-                url: "https://pokeapi.co/api/v2/type/15/",
+                flavor_text:
+                  "A strange seed was\nplanted on its\nback at birth.\fThe plant sprouts\nand grows with\nthis POKéMON.",
+                language: {
+                  name: "en",
+                  url: "https://pokeapi.co/api/v2/language/9/",
+                },
+                version: {
+                  name: "red",
+                  url: "https://pokeapi.co/api/v2/version/1/",
+                },
               },
             ],
-            half_damage_from: [
-              {
-                name: "ground",
-                url: "https://pokeapi.co/api/v2/type/5/",
-              },
-              {
-                name: "water",
-                url: "https://pokeapi.co/api/v2/type/11/",
-              },
-              {
-                name: "grass",
-                url: "https://pokeapi.co/api/v2/type/12/",
-              },
-              {
-                name: "electric",
-                url: "https://pokeapi.co/api/v2/type/13/",
-              },
-            ],
-          },
-        })
-      );
-      fetchMock.mockResponse(
-        JSON.stringify({
-          damage_relations: {
-            double_damage_from: [
-              {
-                name: "ground",
-                url: "https://pokeapi.co/api/v2/type/5/",
-              },
-              {
-                name: "psychic",
-                url: "https://pokeapi.co/api/v2/type/14/",
-              },
-            ],
-            half_damage_from: [
-              {
-                name: "fighting",
-                url: "https://pokeapi.co/api/v2/type/2/",
-              },
-              {
-                name: "poison",
-                url: "https://pokeapi.co/api/v2/type/4/",
-              },
-              {
-                name: "bug",
-                url: "https://pokeapi.co/api/v2/type/7/",
-              },
-              {
-                name: "grass",
-                url: "https://pokeapi.co/api/v2/type/12/",
-              },
-              {
-                name: "fairy",
-                url: "https://pokeapi.co/api/v2/type/18/",
-              },
-            ],
-          },
-        })
-      );
-
-      const response = await PokemonService.getPokemon("bulbasaur");
-
-      expect(response.weaknesses.sort()).toEqual(
-        ["fire", "flying", "psychic", "ice"].sort()
-      );
+          })
+        );
+      });
+      it("should have given url in fetch call", async () => {
+        await PokemonService.getEntry(
+          "https://pokeapi.co/api/v2/pokemon-species/1/"
+        );
+        expect(fetchMock).toHaveBeenCalledWith(
+          "https://pokeapi.co/api/v2/pokemon-species/1/",
+          { method: "GET" }
+        );
+      });
+      it("should return entry with breaks", async () => {
+        const response = await PokemonService.getEntry(
+          "https://pokeapi.co/api/v2/pokemon-species/1/"
+        );
+        expect(response).toEqual(
+          "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON."
+        );
+      });
     });
-    it("given only one type returns weaknesses", async () => {
-      fetchMock.resetMocks();
-      fetchMock.mockResponseOnce(
-        JSON.stringify({
-          abilities: [
-            {
-              ability: {
-                name: "overgrow",
-                url: "https://pokeapi.co/api/v2/ability/65/",
-              },
-            },
-          ],
-          height: 7,
-          name: "test",
-          id: 1,
-          sprites: { front_default: "exampleUrl" },
-          types: [
-            {
-              slot: 1,
-              type: {
-                name: "grass",
-                url: "https://pokeapi.co/api/v2/type/12/",
-              },
-            },
-          ],
-          weight: 69,
-          species: {
-            name: "bulbasaur",
-            url: "https://pokeapi.co/api/v2/pokemon-species/1/",
-          },
-          stats: [
-            {
-              base_stat: 45,
-              stat: {
-                name: "hp",
-              },
-            },
-            {
-              base_stat: 49,
-              stat: {
-                name: "attack",
-              },
-            },
-            {
-              base_stat: 49,
-              stat: {
-                name: "defense",
-              },
-            },
-            {
-              base_stat: 65,
-              stat: {
-                name: "special-attack",
-              },
-            },
-            {
-              base_stat: 65,
-              stat: {
-                name: "special-defense",
-              },
-            },
-            {
-              base_stat: 45,
-              stat: {
-                name: "speed",
-              },
-            },
-          ],
-        })
-      );
-      fetchMock.mockResponse(
-        JSON.stringify({
-          damage_relations: {
-            double_damage_from: [
+    describe("get ability", () => {
+      beforeEach(() => {
+        fetchMock.resetMocks();
+        fetchMock.mockResponseOnce(
+          JSON.stringify({
+            flavor_text_entries: [
               {
-                name: "flying",
-                url: "https://pokeapi.co/api/v2/type/3/",
-              },
-              {
-                name: "poison",
-                url: "https://pokeapi.co/api/v2/type/4/",
-              },
-              {
-                name: "bug",
-                url: "https://pokeapi.co/api/v2/type/7/",
-              },
-              {
-                name: "fire",
-                url: "https://pokeapi.co/api/v2/type/10/",
-              },
-              {
-                name: "ice",
-                url: "https://pokeapi.co/api/v2/type/15/",
+                flavor_text: "Powers up Grass-type\nmoves in a pinch.",
+                language: {
+                  name: "en",
+                  url: "https://pokeapi.co/api/v2/language/9/",
+                },
+                version_group: {
+                  name: "heartgold-soulsilver",
+                  url: "https://pokeapi.co/api/v2/version-group/10/",
+                },
               },
             ],
-            half_damage_from: [
-              {
-                name: "ground",
-                url: "https://pokeapi.co/api/v2/type/5/",
-              },
-              {
-                name: "water",
-                url: "https://pokeapi.co/api/v2/type/11/",
-              },
-              {
-                name: "grass",
-                url: "https://pokeapi.co/api/v2/type/12/",
-              },
-              {
-                name: "electric",
-                url: "https://pokeapi.co/api/v2/type/13/",
-              },
-            ],
-          },
-        })
-      );
-      const response = await PokemonService.getPokemon("test");
-
-      expect(response.weaknesses.sort()).toEqual(
-        ["fire", "flying", "poison", "ice", "bug"].sort()
-      );
-    });
-    it("returns weaknesses given one type is immune and another tpye is weak", async () => {
-      fetchMock.resetMocks();
-      fetchMock.mockResponseOnce(
-        JSON.stringify({
-          abilities: [
-            {
-              ability: {
-                name: "overgrow",
-                url: "https://pokeapi.co/api/v2/ability/65/",
-              },
-            },
-          ],
-          height: 7,
-          name: "bulbasaur",
-          id: 1,
-          sprites: { front_default: "exampleUrl" },
-          types: [
-            {
-              slot: 1,
-              type: {
-                name: "grass",
-                url: "https://pokeapi.co/api/v2/type/12/",
-              },
-            },
-            {
-              slot: 2,
-              type: {
-                name: "poison",
-                url: "https://pokeapi.co/api/v2/type/4/",
-              },
-            },
-          ],
-          weight: 69,
-          species: {
-            name: "bulbasaur",
-            url: "https://pokeapi.co/api/v2/pokemon-species/1/",
-          },
-          stats: [
-            {
-              base_stat: 45,
-              stat: {
-                name: "hp",
-              },
-            },
-            {
-              base_stat: 49,
-              stat: {
-                name: "attack",
-              },
-            },
-            {
-              base_stat: 49,
-              stat: {
-                name: "defense",
-              },
-            },
-            {
-              base_stat: 65,
-              stat: {
-                name: "special-attack",
-              },
-            },
-            {
-              base_stat: 65,
-              stat: {
-                name: "special-defense",
-              },
-            },
-            {
-              base_stat: 45,
-              stat: {
-                name: "speed",
-              },
-            },
-          ],
-        })
-      );
-      fetchMock.mockResponseOnce(
-        JSON.stringify({
-          damage_relations: {
-            double_damage_from: [
-              {
-                name: "flying",
-                url: "https://pokeapi.co/api/v2/type/3/",
-              },
-              {
-                name: "poison",
-                url: "https://pokeapi.co/api/v2/type/4/",
-              },
-              {
-                name: "bug",
-                url: "https://pokeapi.co/api/v2/type/7/",
-              },
-              {
-                name: "fire",
-                url: "https://pokeapi.co/api/v2/type/10/",
-              },
-              {
-                name: "ice",
-                url: "https://pokeapi.co/api/v2/type/15/",
-              },
-            ],
-            half_damage_from: [
-              {
-                name: "ground",
-                url: "https://pokeapi.co/api/v2/type/5/",
-              },
-              {
-                name: "water",
-                url: "https://pokeapi.co/api/v2/type/11/",
-              },
-              {
-                name: "grass",
-                url: "https://pokeapi.co/api/v2/type/12/",
-              },
-              {
-                name: "electric",
-                url: "https://pokeapi.co/api/v2/type/13/",
-              },
-            ],
-            no_damage_from: [
-              {
-                name: "psychic",
-                url: "https://pokeapi.co/api/v2/type/14/",
-              },
-            ],
-          },
-        })
-      );
-      fetchMock.mockResponse(
-        JSON.stringify({
-          damage_relations: {
-            double_damage_from: [
-              {
-                name: "ground",
-                url: "https://pokeapi.co/api/v2/type/5/",
-              },
-              {
-                name: "psychic",
-                url: "https://pokeapi.co/api/v2/type/14/",
-              },
-            ],
-            half_damage_from: [
-              {
-                name: "fighting",
-                url: "https://pokeapi.co/api/v2/type/2/",
-              },
-              {
-                name: "poison",
-                url: "https://pokeapi.co/api/v2/type/4/",
-              },
-              {
-                name: "bug",
-                url: "https://pokeapi.co/api/v2/type/7/",
-              },
-              {
-                name: "grass",
-                url: "https://pokeapi.co/api/v2/type/12/",
-              },
-              {
-                name: "fairy",
-                url: "https://pokeapi.co/api/v2/type/18/",
-              },
-            ],
-          },
-        })
-      );
-
-      const response = await PokemonService.getPokemon("test");
-
-      expect(response.weaknesses.sort()).toEqual(
-        ["fire", "flying", "ice"].sort()
-      );
+          })
+        );
+      });
+      it("should have given url in fetch call", async () => {
+        await PokemonService.getAbility(
+          "https://pokeapi.co/api/v2/ability/65/"
+        );
+        expect(fetchMock).toHaveBeenCalledWith(
+          "https://pokeapi.co/api/v2/ability/65/",
+          { method: "GET" }
+        );
+      });
+      it("should return entry with breaks", async () => {
+        const response = await PokemonService.getAbility(
+          "https://pokeapi.co/api/v2/ability/65/"
+        );
+        expect(response).toEqual(
+          "Powers up Grass-type moves in a pinch."
+        );
+      });
     });
   });
 });

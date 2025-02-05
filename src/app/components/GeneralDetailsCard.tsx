@@ -15,11 +15,10 @@ export default function GeneralDetailsCard({
   return (
     <Card className={`${className}`}>
       {details.map((detail, index) => (
-
-      <CardContent key={index}>
-        <h3 className="text-2xl font-semibold">{detail.heading}</h3>
-        <div className="text-xl pt-2">{detail.value}</div>
-      </CardContent>
+        <CardContent key={index}>
+          <h3 className="text-2xl font-semibold">{detail.heading}</h3>
+          <div className="text-xl pt-2">{detail.value}</div>
+        </CardContent>
       ))}
     </Card>
   );
