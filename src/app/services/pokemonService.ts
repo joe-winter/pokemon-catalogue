@@ -3,6 +3,11 @@ interface PokemonUrl {
   url: string;
 }
 
+interface NameUrl {
+  name: string;
+  url: string;
+}
+
 interface PokemonFetchData {
   count: number;
   next: string | null;
@@ -10,70 +15,256 @@ interface PokemonFetchData {
   results: PokemonUrl[];
 }
 
-interface Pokemon {
+interface Type {
+  type: NameUrl;
+}
+
+interface BasicPokemon {
   name: string;
-  imageUrl: string;
   id: number;
+  image: string;
   types: string[];
 }
 
-interface Type {
-  type: {
+interface DamageRelations {
+  double_damage_from: NameUrl[];
+  double_damage_to: NameUrl[];
+  half_damage_from: NameUrl[];
+  half_damage_to: NameUrl[];
+  no_damage_from: NameUrl[];
+  no_damage_to: NameUrl[];
+}
+
+// interface PokemonListResponse {
+//   next: boolean;
+//   previous: boolean;
+//   pokemonList: Pokemon[];
+// }
+
+interface PokemonDetails {
+  name: string;
+  id: number;
+  imageUrl: string;
+  height: number;
+  category: string;
+  weight: number;
+  gender: string[];
+  ability: {
+    name: string;
+    url: string;
+  };
+  stats: {
+    hp: number;
+    attack: number;
+    defense: number;
+    specialAttack: number;
+    specialDefence: number;
+    speed: number;
+  };
+  types: Type[];
+  species: string;
+}
+
+interface Genus {
+  genus: string;
+  language: {
     name: string;
     url: string;
   };
 }
 
-interface PokemonListResponse {
-  next: boolean;
-  previous: boolean;
-  pokemonList: Pokemon[]
+interface TypeData {
+  types: string[];
+  weaknesses: string[];
+}
+
+interface AbilityData {
+  ability: {
+    name: string;
+    description: string;
+  };
+}
+
+interface SpeciesData {
+  entry: string;
+  gender: string;
+  category: string;
+}
+
+interface PokemonData {
+  name: string;
+  id: number;
+  image: string;
+  height: number;
+  weight: number;
+  stats: {
+    hp: number;
+    attack: number;
+    defense: number;
+    specialAttack: number;
+    specialDefence: number;
+    speed: number;
+  };
+  typeUrl: string[];
+  abilityUrl: string;
+  speciesUrl: string;
 }
 
 export default class PokemonService {
-  public static async getPokemonPerPage(limit: number = 0, offset: number = 0) {
-    // initial fetch for list pokemon
-    const url = `https://pokeapi.co/api/v2/pokemon/?offset=${offset}&limit=${limit}`;
-    const response = await fetch(url, { method: "GET" });
+  // GET BASIC POKEMON DATA
+
+  public static async getAllPokemon() {
+    const response = await fetch(
+      "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0",
+      { method: "GET" }
+    );
     const data: PokemonFetchData = await response.json();
-
-    const pokemonList = await this.getPokemonFromList(data.results)
-
-    const res: PokemonListResponse = {
-      next: data.next !== null ? true : false,
-      previous: data.previous !== null ? true : false,
-      pokemonList
-    }
-
-    return res;
+    return data.results;
   }
 
-  private static convertTypes(types: Type[]) {
-    // converts list of objects into list of strings
-    return types.map((type) => type.type.name);
-  }
-
-  public static async getAllPokemon () {
-    const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0", { method: "GET" })
-    const data: PokemonFetchData = await response.json()
-    return data.results
-  }
-
-  public static async getPokemonFromList (pokemonUrlList: PokemonUrl[]) {
-    const pokemonList: Pokemon[] = [];
-
+  public static async getBasicPokemonData(
+    pokemonUrlList: PokemonUrl[]
+  ): Promise<BasicPokemon[]> {
+    const pokemonList: BasicPokemon[] = [];
     for (const pokemon of pokemonUrlList) {
       const response = await fetch(pokemon.url, { method: "GET" });
       const data = await response.json();
-      const convertedPokemon = {
+      const basicPokemon = {
         name: data.name,
         id: data.id,
-        imageUrl: data.sprites.front_default,
-        types: this.convertTypes(data.types),
+        image: data.sprites.front_default,
+        types: data.types.map((type: Type) => type.type.name),
       };
-      pokemonList.push(convertedPokemon);
+      pokemonList.push(basicPokemon);
     }
 
-    return pokemonList
+    return pokemonList;
+  }
+
+  // GET DETAILED POKEMON DATA
+
+  // /pokemon
+
+  public static async getPokemonData(
+    pokemonName: string
+  ): Promise<PokemonData> {
+    const response = await fetch(
+      `https://pokeapi.co/api/v2/pokemon/${pokemonName}`,
+      {
+        method: "GET",
+      }
+    );
+    const basicData = await response.json();
+
+    return {
+      name: basicData.name,
+      id: basicData.id,
+      image: basicData.sprites.front_default,
+      height: basicData.height / 10,
+      weight: basicData.weight / 10,
+      stats: {
+        hp: basicData.stats[0].base_stat,
+        attack: basicData.stats[1].base_stat,
+        defense: basicData.stats[2].base_stat,
+        specialAttack: basicData.stats[3].base_stat,
+        specialDefence: basicData.stats[4].base_stat,
+        speed: basicData.stats[5].base_stat,
+      },
+      typeUrl: basicData.types.map((type: Type) => type.type.url),
+      speciesUrl: basicData.species.url,
+      abilityUrl: basicData.abilities[0].ability.url,
+    };
+  }
+
+  // /type
+
+  public static async getTypeData(typeUrl: string[]): Promise<TypeData> {
+    const types: string[] = [];
+    const damageRelations: DamageRelations[] = [];
+    for (const url of typeUrl) {
+      const response = await fetch(url, { method: "GET" });
+      const data = await response.json();
+      damageRelations.push(data.damage_relations);
+      types.push(data.name);
+    }
+    const weaknesses = await this.getWeaknesses(damageRelations);
+    return { types, weaknesses };
+  }
+
+  public static async getWeaknesses(damageRelations: DamageRelations[]) {
+    let doubleDamageFrom: string[] = [];
+    let halfDamageFrom: string[] = [];
+    let noDamageFrom: string[] = [];
+    for (const damageRelation of damageRelations) {
+      const doubleDamageFromNames = damageRelation.double_damage_from?.map(
+        (element) => element.name
+      );
+      doubleDamageFrom = doubleDamageFrom.concat(doubleDamageFromNames);
+      const halfDamageFromNames = damageRelation.half_damage_from?.map(
+        (element) => element.name
+      );
+      halfDamageFrom = halfDamageFrom.concat(halfDamageFromNames);
+      const noDamageFromNames = damageRelation.no_damage_from?.map(
+        (element) => element.name
+      );
+      noDamageFrom = noDamageFrom.concat(noDamageFromNames);
+    }
+    doubleDamageFrom = [...new Set(doubleDamageFrom)];
+    halfDamageFrom = [...new Set(halfDamageFrom)];
+    noDamageFrom = [...new Set(noDamageFrom)];
+
+    // remove from double damage list if in half damage list
+    const array = doubleDamageFrom.filter(
+      (element) => halfDamageFrom.indexOf(element) < 0
+    );
+    // remove from array if in no damage from list
+    const array2 = array.filter((element) => noDamageFrom.indexOf(element) < 0);
+    return array2;
+  }
+
+  // /pokemon-species
+
+  public static async getSpeciesData(speciesUrl: string): Promise<SpeciesData> {
+    const response = await fetch(speciesUrl, { method: "GET" });
+    const data = await response.json();
+    const entry = data.flavor_text_entries?.[0].flavor_text.replace(
+      /[\f\n]+/gm,
+      " "
+    );
+    const genera: Genus[] = data.genera;
+    const genus = genera.filter((genus) => genus.language.name === "en");
+    // remove pokemon word from genus
+    const category = genus[0].genus.split(" ")[0];
+    const gender = this.getGender(data.gender_rate);
+    return {
+      entry,
+      category,
+      gender,
+    };
+  }
+
+  public static getGender(genderRate: number) {
+    if (genderRate < 1) {
+      return "Genderless";
+    } else if (genderRate > 0 && genderRate < 8) {
+      return "Male / Female";
+    } else {
+      return "Female";
+    }
+  }
+
+  // /a
+
+  public static async getAbilityData(abilityUrl: string): Promise<AbilityData> {
+    const response = await fetch(abilityUrl, { method: "GET" });
+    const data = await response.json();
+    const description = data.flavor_text_entries?.[0].flavor_text.replace(
+      /[\f\n]+/gm,
+      " "
+    );
+    return{ability: {
+      name: data.name,
+      description: description
+    }};
   }
 }

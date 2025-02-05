@@ -12,6 +12,12 @@ const nextConfig: NextConfig = {
         hostname: "raw.githubusercontent.com",
         port: '',
         search: ''
+      },
+      {
+        protocol: 'https',
+        hostname: "pokeapi.co",
+        port: '',
+        search: ''
       }
     ]
   }

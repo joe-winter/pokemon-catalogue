@@ -5,9 +5,10 @@ import PokemonService from "./services/pokemonService";
 import PageSwitcher from "./components/PageSwitcher";
 import SearchBar from "./components/SearchBar";
 import LoadingSpinner from "./components/LoadingSpinner";
+import Link from "next/link";
 interface Pokemon {
   name: string;
-  imageUrl: string;
+  image: string;
   id: number;
   types: string[];
 }
@@ -49,7 +50,7 @@ export default function Home() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await PokemonService.getPokemonFromList(
+        const response = await PokemonService.getBasicPokemonData(
           pokemonList.slice(12 * pageNumber, 12 * (pageNumber + 1))
         );
         setDisplayedPokemons(response);
@@ -62,12 +63,12 @@ export default function Home() {
     fetchData();
   }, [pageNumber, pokemonList]);
 
-  console.log(pokemonList.length)
+  console.log(pokemonList.length);
 
   // when user searches set pokemon list to filtered list
   const handleSearch = async () => {
     if (searchValue !== "") {
-      setPageNumber(0)
+      setPageNumber(0);
       const filteredList = initialPokemonList.filter((pokemon) =>
         pokemon.name.toLowerCase().includes(searchValue.toLowerCase())
       );
@@ -109,13 +110,14 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-4 max-w-fit gap-x-4 gap-y-8">
               {displayedPokemons.map((data, index) => (
-                <PokemonCard
-                  key={index}
-                  name={data.name}
-                  imageUrl={data.imageUrl !== null ? data.imageUrl : ""}
-                  number={"#" + data.id.toString().padStart(4, "0")}
-                  types={data.types}
-                />
+                <Link key={index} href={`/${data.name}`}>
+                  <PokemonCard
+                    name={data.name}
+                    imageUrl={data.image !== null ? data.image : ""}
+                    number={"#" + data.id.toString().padStart(4, "0")}
+                    types={data.types}
+                  />
+                </Link>
               ))}
             </div>
           )}
