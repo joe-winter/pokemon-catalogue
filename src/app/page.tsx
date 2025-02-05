@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PokemonCard from "./components/PokemonCard";
 import PokemonService from "./services/pokemonService";
 import PageSwitcher from "./components/PageSwitcher";
@@ -44,6 +44,13 @@ export default function Home() {
     };
     fetchData();
   }, []);
+
+  const searchList = useMemo(() => {
+    const list = initialPokemonList.map(element => element.name)
+    return list.filter((element) =>
+      element.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  }, [initialPokemonList, searchValue]);
 
   // fetch pokemon data for each url in the pokemon list
   useEffect(() => {
@@ -97,6 +104,7 @@ export default function Home() {
             placeholder="Find Pokémon"
             searchFunction={handleSearch}
             disabled={isLoading}
+            searchList={searchList}
           />
         </div>
         {/* pokemon grid */}

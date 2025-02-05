@@ -6,7 +6,7 @@ describe("search bar", () => {
   it("has input field and search button", async () => {
     const user = userEvent.setup();
     const setInputValue = jest.fn();
-    render(<SearchBar inputValue="" setInputValue={setInputValue} />);
+    render(<SearchBar inputValue="" setInputValue={setInputValue} searchList={[""]}/>);
 
     const buttonEl = screen.getByRole("button");
     expect(buttonEl).toHaveTextContent("Search");
