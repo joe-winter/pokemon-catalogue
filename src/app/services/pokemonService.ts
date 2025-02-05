@@ -63,6 +63,14 @@ interface PokemonDetails {
   };
 }
 
+interface Genus {
+  genus: string;
+  language: {
+    name: string;
+    url: string;
+  };
+}
+
 export default class PokemonService {
   public static async getPokemonPerPage(limit: number = 0, offset: number = 0) {
     // initial fetch for list pokemon
@@ -125,13 +133,28 @@ export default class PokemonService {
   public static async getEntry(speciesUrl: string) {
     const response = await fetch(speciesUrl, { method: "GET" });
     const data = await response.json();
-    const entry = data.flavor_text_entries?.[0].flavor_text.replace(/[\f\n]+/gm, " ");
+    const entry = data.flavor_text_entries?.[0].flavor_text.replace(
+      /[\f\n]+/gm,
+      " "
+    );
     return entry;
+  }
+  public static async getCategory(speciesUrl: string) {
+    const response = await fetch(speciesUrl, { method: "GET" });
+    const data = await response.json();
+    const genera: Genus[] = data.genera;
+    const genus = genera.filter((genus) => genus.language.name === "en");
+    // remove pokemon word from genus
+    const category = genus[0].genus.split(" ")[0]
+    return category;
   }
   public static async getAbility(abilityUrl: string) {
     const response = await fetch(abilityUrl, { method: "GET" });
     const data = await response.json();
-    const entry = data.flavor_text_entries?.[0].flavor_text.replace(/[\f\n]+/gm, " ");
+    const entry = data.flavor_text_entries?.[0].flavor_text.replace(
+      /[\f\n]+/gm,
+      " "
+    );
     return entry;
   }
 

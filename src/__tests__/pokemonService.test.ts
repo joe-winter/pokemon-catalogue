@@ -535,8 +535,104 @@ describe("pokemon service", () => {
         const response = await PokemonService.getAbility(
           "https://pokeapi.co/api/v2/ability/65/"
         );
+        expect(response).toEqual("Powers up Grass-type moves in a pinch.");
+      });
+    });
+    describe("get category", () => {
+      beforeEach(() => {
+        fetchMock.resetMocks();
+        fetchMock.mockResponseOnce(
+          JSON.stringify({
+            genera: [
+              {
+                genus: "たねポケモン",
+                language: {
+                  name: "ja-Hrkt",
+                  url: "https://pokeapi.co/api/v2/language/1/",
+                },
+              },
+              {
+                genus: "씨앗포켓몬",
+                language: {
+                  name: "ko",
+                  url: "https://pokeapi.co/api/v2/language/3/",
+                },
+              },
+              {
+                genus: "種子寶可夢",
+                language: {
+                  name: "zh-Hant",
+                  url: "https://pokeapi.co/api/v2/language/4/",
+                },
+              },
+              {
+                genus: "Pokémon Graine",
+                language: {
+                  name: "fr",
+                  url: "https://pokeapi.co/api/v2/language/5/",
+                },
+              },
+              {
+                genus: "Samen-Pokémon",
+                language: {
+                  name: "de",
+                  url: "https://pokeapi.co/api/v2/language/6/",
+                },
+              },
+              {
+                genus: "Pokémon Semilla",
+                language: {
+                  name: "es",
+                  url: "https://pokeapi.co/api/v2/language/7/",
+                },
+              },
+              {
+                genus: "Pokémon Seme",
+                language: {
+                  name: "it",
+                  url: "https://pokeapi.co/api/v2/language/8/",
+                },
+              },
+              {
+                genus: "Seed Pokémon",
+                language: {
+                  name: "en",
+                  url: "https://pokeapi.co/api/v2/language/9/",
+                },
+              },
+              {
+                genus: "たねポケモン",
+                language: {
+                  name: "ja",
+                  url: "https://pokeapi.co/api/v2/language/11/",
+                },
+              },
+              {
+                genus: "种子宝可梦",
+                language: {
+                  name: "zh-Hans",
+                  url: "https://pokeapi.co/api/v2/language/12/",
+                },
+              },
+            ],
+          })
+        );
+      });
+      it("should fetch with given url", async () => {
+        await PokemonService.getCategory(
+          "https://pokeapi.co/api/v2/pokemon-species/1/"
+        );
+        expect(fetchMock).toHaveBeenCalledWith(
+          "https://pokeapi.co/api/v2/pokemon-species/1/",
+          { method: "GET" }
+        );
+      });
+      it("should return en genus", async () => {
+        const response = await PokemonService.getCategory(
+          "https://pokeapi.co/api/v2/pokemon-species/1/"
+        );
         expect(response).toEqual(
-          "Powers up Grass-type moves in a pinch."
+          "Seed"
         );
       });
     });
