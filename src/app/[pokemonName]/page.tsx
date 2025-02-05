@@ -6,6 +6,7 @@ import { capitalizeString } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import StatsCard from "../components/StatsCard";
 
 interface PokemonDetails {
   name: string;
@@ -77,6 +78,15 @@ export default function Page({
     };
     fetchData();
   }, [params]);
+
+  const stats = [
+    { name: "HP", value: pokemon.stats.hp },
+    { name: "Attack", value: pokemon.stats.attack },
+    { name: "Defense", value: pokemon.stats.defense },
+    { name: "Special Attack", value: pokemon.stats.specialAttack },
+    { name: "Special Defence", value: pokemon.stats.hp },
+    { name: "Speed", value: pokemon.stats.hp },
+  ];
   return (
     <div className="font-[family-name:var(--font-geist-sans)]">
       <h1 className="font-semibold text-2xl my-6 pl-16">Pokemon Browser</h1>
@@ -116,22 +126,22 @@ export default function Page({
           </Card>
           <div className="grid grid-cols-3 grid-rows-2 gap-4">
             <Card className="row-span-2 px-2 pt-8">
-                <CardContent>
-                  <h3 className="text-2xl font-semibold">Height</h3>
-                  <div className="text-xl pt-2">{pokemon.height}m</div>
-                </CardContent>
-                <CardContent>
-                  <h3 className="text-2xl font-semibold">Category</h3>
-                  <div className="text-xl pt-2">{pokemon.category}</div>
-                </CardContent>
-                <CardContent>
-                  <h3 className="text-2xl font-semibold">Weight</h3>
-                  <div className="text-xl pt-2">{pokemon.weight}</div>
-                </CardContent>
-                <CardContent>
-                  <h3 className="text-2xl font-semibold">Gender</h3>
-                  <div className="text-xl pt-2">{pokemon.gender}</div>
-                </CardContent>
+              <CardContent>
+                <h3 className="text-2xl font-semibold">Height</h3>
+                <div className="text-xl pt-2">{pokemon.height}m</div>
+              </CardContent>
+              <CardContent>
+                <h3 className="text-2xl font-semibold">Category</h3>
+                <div className="text-xl pt-2">{pokemon.category}</div>
+              </CardContent>
+              <CardContent>
+                <h3 className="text-2xl font-semibold">Weight</h3>
+                <div className="text-xl pt-2">{pokemon.weight}</div>
+              </CardContent>
+              <CardContent>
+                <h3 className="text-2xl font-semibold">Gender</h3>
+                <div className="text-xl pt-2">{pokemon.gender}</div>
+              </CardContent>
             </Card>
             <Card className="px-2 pt-8">
               <CardContent>
@@ -174,44 +184,8 @@ export default function Page({
                 <div>{pokemon.ability.description}</div>
               </CardContent>
             </Card>
-            <Card className="col-span-2">
-              <CardContent className="px-8 py-1.5 mt-6">
-                <div className="flex items-center justify-between">
-                  <div className="font-semibold text-xl">HP</div>
-                  <Progress value={pokemon.stats.hp} />
-                </div>
-              </CardContent>
-              <CardContent className="px-8 py-1.5">
-                <div className="flex items-center justify-between">
-                  <div className="font-semibold text-xl">Attack</div>
-                  <Progress value={pokemon.stats.attack} />
-                </div>
-              </CardContent>
-              <CardContent className="px-8 py-1.5">
-                <div className="flex items-center justify-between">
-                  <div className="font-semibold text-xl">Defence</div>
-                  <Progress value={pokemon.stats.defense} />
-                </div>
-              </CardContent>
-              <CardContent className="px-8 py-1.5">
-                <div className="flex items-center justify-between">
-                  <div className="font-semibold text-xl">Special Attack</div>
-                  <Progress value={pokemon.stats.specialAttack} />
-                </div>
-              </CardContent>
-              <CardContent className="px-8 py-1.5">
-                <div className="flex items-center justify-between">
-                  <div className="font-semibold text-xl">Special Defence</div>
-                  <Progress value={pokemon.stats.specialDefence} />
-                </div>
-              </CardContent>
-              <CardContent className="px-8 py-1.5 mb-6">
-                <div className="flex items-center justify-between">
-                  <div className="font-semibold text-xl">Speed</div>
-                  <Progress value={pokemon.stats.speed} />
-                </div>
-              </CardContent>
-            </Card>
+
+            <StatsCard className="col-span-2 py-6" stats={stats} />
           </div>
         </div>
       </div>
