@@ -35,36 +35,6 @@ interface DamageRelations {
   no_damage_to: NameUrl[];
 }
 
-// interface PokemonListResponse {
-//   next: boolean;
-//   previous: boolean;
-//   pokemonList: Pokemon[];
-// }
-
-interface PokemonDetails {
-  name: string;
-  id: number;
-  imageUrl: string;
-  height: number;
-  category: string;
-  weight: number;
-  gender: string[];
-  ability: {
-    name: string;
-    url: string;
-  };
-  stats: {
-    hp: number;
-    attack: number;
-    defense: number;
-    specialAttack: number;
-    specialDefence: number;
-    speed: number;
-  };
-  types: Type[];
-  species: string;
-}
-
 interface Genus {
   genus: string;
   language: {
