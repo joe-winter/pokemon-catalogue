@@ -8,7 +8,7 @@ import LoadingSpinner from "./components/LoadingSpinner";
 import Link from "next/link";
 interface Pokemon {
   name: string;
-  imageUrl: string;
+  image: string;
   id: number;
   types: string[];
 }
@@ -50,7 +50,7 @@ export default function Home() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await PokemonService.getPokemonFromList(
+        const response = await PokemonService.getBasicPokemonData(
           pokemonList.slice(12 * pageNumber, 12 * (pageNumber + 1))
         );
         setDisplayedPokemons(response);
@@ -113,7 +113,7 @@ export default function Home() {
                 <Link key={index} href={`/${data.name}`}>
                   <PokemonCard
                     name={data.name}
-                    imageUrl={data.imageUrl !== null ? data.imageUrl : ""}
+                    imageUrl={data.image !== null ? data.image : ""}
                     number={"#" + data.id.toString().padStart(4, "0")}
                     types={data.types}
                   />
