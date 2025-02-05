@@ -105,12 +105,14 @@ describe("pokemon service", () => {
                 slot: 1,
                 type: {
                   name: "grass",
+                  url: "https://pokeapi.co/api/v2/type/12/",
                 },
               },
               {
                 slot: 2,
                 type: {
                   name: "poison",
+                  url: "https://pokeapi.co/api/v2/type/4/",
                 },
               },
             ],
@@ -182,6 +184,28 @@ describe("pokemon service", () => {
         expect(response.stats.specialAttack).toEqual(65);
         expect(response.stats.specialDefence).toEqual(65);
         expect(response.stats.speed).toEqual(45);
+        expect(response.ability.url).toEqual(
+          "https://pokeapi.co/api/v2/ability/65/"
+        );
+        expect(response.types).toEqual([
+          {
+            slot: 1,
+            type: {
+              name: "grass",
+              url: "https://pokeapi.co/api/v2/type/12/",
+            },
+          },
+          {
+            slot: 2,
+            type: {
+              name: "poison",
+              url: "https://pokeapi.co/api/v2/type/4/",
+            },
+          },
+        ]);
+        expect(response.species).toEqual(
+          "https://pokeapi.co/api/v2/pokemon-species/1/"
+        );
       });
     });
     describe("get weaknesses", () => {
@@ -461,84 +485,7 @@ describe("pokemon service", () => {
         expect(response.sort()).toEqual(["grass", "poison"].sort());
       });
     });
-    describe("get entry", () => {
-      beforeEach(() => {
-        fetchMock.resetMocks();
-        fetchMock.mockResponseOnce(
-          JSON.stringify({
-            flavor_text_entries: [
-              {
-                flavor_text:
-                  "A strange seed was\nplanted on its\nback at birth.\fThe plant sprouts\nand grows with\nthis POKéMON.",
-                language: {
-                  name: "en",
-                  url: "https://pokeapi.co/api/v2/language/9/",
-                },
-                version: {
-                  name: "red",
-                  url: "https://pokeapi.co/api/v2/version/1/",
-                },
-              },
-            ],
-          })
-        );
-      });
-      it("should have given url in fetch call", async () => {
-        await PokemonService.getEntry(
-          "https://pokeapi.co/api/v2/pokemon-species/1/"
-        );
-        expect(fetchMock).toHaveBeenCalledWith(
-          "https://pokeapi.co/api/v2/pokemon-species/1/",
-          { method: "GET" }
-        );
-      });
-      it("should return entry with breaks", async () => {
-        const response = await PokemonService.getEntry(
-          "https://pokeapi.co/api/v2/pokemon-species/1/"
-        );
-        expect(response).toEqual(
-          "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON."
-        );
-      });
-    });
-    describe("get ability", () => {
-      beforeEach(() => {
-        fetchMock.resetMocks();
-        fetchMock.mockResponseOnce(
-          JSON.stringify({
-            flavor_text_entries: [
-              {
-                flavor_text: "Powers up Grass-type\nmoves in a pinch.",
-                language: {
-                  name: "en",
-                  url: "https://pokeapi.co/api/v2/language/9/",
-                },
-                version_group: {
-                  name: "heartgold-soulsilver",
-                  url: "https://pokeapi.co/api/v2/version-group/10/",
-                },
-              },
-            ],
-          })
-        );
-      });
-      it("should have given url in fetch call", async () => {
-        await PokemonService.getAbility(
-          "https://pokeapi.co/api/v2/ability/65/"
-        );
-        expect(fetchMock).toHaveBeenCalledWith(
-          "https://pokeapi.co/api/v2/ability/65/",
-          { method: "GET" }
-        );
-      });
-      it("should return entry with breaks", async () => {
-        const response = await PokemonService.getAbility(
-          "https://pokeapi.co/api/v2/ability/65/"
-        );
-        expect(response).toEqual("Powers up Grass-type moves in a pinch.");
-      });
-    });
-    describe("get category", () => {
+    describe("get species data", () => {
       beforeEach(() => {
         fetchMock.resetMocks();
         fetchMock.mockResponseOnce(
@@ -615,25 +562,134 @@ describe("pokemon service", () => {
                 },
               },
             ],
+            flavor_text_entries: [
+              {
+                flavor_text:
+                  "A strange seed was\nplanted on its\nback at birth.\fThe plant sprouts\nand grows with\nthis POKéMON.",
+                language: {
+                  name: "en",
+                  url: "https://pokeapi.co/api/v2/language/9/",
+                },
+                version: {
+                  name: "red",
+                  url: "https://pokeapi.co/api/v2/version/1/",
+                },
+              },
+            ],
           })
         );
       });
-      it("should fetch with given url", async () => {
-        await PokemonService.getCategory(
-          "https://pokeapi.co/api/v2/pokemon-species/1/"
+      describe("get category", () => {
+        it("should fetch with given url", async () => {
+          await PokemonService.getCategory(
+            "https://pokeapi.co/api/v2/pokemon-species/1/"
+          );
+          expect(fetchMock).toHaveBeenCalledWith(
+            "https://pokeapi.co/api/v2/pokemon-species/1/",
+            { method: "GET" }
+          );
+        });
+        it("should return en genus", async () => {
+          const response = await PokemonService.getCategory(
+            "https://pokeapi.co/api/v2/pokemon-species/1/"
+          );
+          expect(response).toEqual("Seed");
+        });
+      });
+      describe("get entry", () => {
+        it("should have given url in fetch call", async () => {
+          await PokemonService.getEntry(
+            "https://pokeapi.co/api/v2/pokemon-species/1/"
+          );
+          expect(fetchMock).toHaveBeenCalledWith(
+            "https://pokeapi.co/api/v2/pokemon-species/1/",
+            { method: "GET" }
+          );
+        });
+        it("should return entry with breaks", async () => {
+          const response = await PokemonService.getEntry(
+            "https://pokeapi.co/api/v2/pokemon-species/1/"
+          );
+          expect(response).toEqual(
+            "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON."
+          );
+        });
+      });
+      describe("get gender", () => {
+        it("should return genderless if gender rate is less < 1", async () => {
+          fetchMock.resetMocks();
+          fetchMock.mockResponseOnce(
+            JSON.stringify({
+              gender_rate: -1,
+            })
+          );
+          const response = await PokemonService.getGender(
+            "https://pokeapi.co/api/v2/pokemon-species/1/"
+          );
+          expect(response).toEqual("Genderless");
+        });
+        it("should return male / female if gender rate is less 0 < and < 8", async () => {
+          fetchMock.resetMocks();
+          fetchMock.mockResponseOnce(
+            JSON.stringify({
+              gender_rate: 1,
+            })
+          );
+          const response = await PokemonService.getGender(
+            "https://pokeapi.co/api/v2/pokemon-species/1/"
+          );
+          expect(response).toEqual("Male / Female");
+        });
+        it("should return female if gender rate is 8", async () => {
+          fetchMock.resetMocks();
+          fetchMock.mockResponseOnce(
+            JSON.stringify({
+              gender_rate: 8,
+            })
+          );
+          const response = await PokemonService.getGender(
+            "https://pokeapi.co/api/v2/pokemon-species/1/"
+          );
+          expect(response).toEqual("Female");
+        });
+      });
+    });
+
+    describe("get ability", () => {
+      beforeEach(() => {
+        fetchMock.resetMocks();
+        fetchMock.mockResponseOnce(
+          JSON.stringify({
+            flavor_text_entries: [
+              {
+                flavor_text: "Powers up Grass-type\nmoves in a pinch.",
+                language: {
+                  name: "en",
+                  url: "https://pokeapi.co/api/v2/language/9/",
+                },
+                version_group: {
+                  name: "heartgold-soulsilver",
+                  url: "https://pokeapi.co/api/v2/version-group/10/",
+                },
+              },
+            ],
+          })
+        );
+      });
+      it("should have given url in fetch call", async () => {
+        await PokemonService.getAbility(
+          "https://pokeapi.co/api/v2/ability/65/"
         );
         expect(fetchMock).toHaveBeenCalledWith(
-          "https://pokeapi.co/api/v2/pokemon-species/1/",
+          "https://pokeapi.co/api/v2/ability/65/",
           { method: "GET" }
         );
       });
-      it("should return en genus", async () => {
-        const response = await PokemonService.getCategory(
-          "https://pokeapi.co/api/v2/pokemon-species/1/"
+      it("should return entry with breaks", async () => {
+        const response = await PokemonService.getAbility(
+          "https://pokeapi.co/api/v2/ability/65/"
         );
-        expect(response).toEqual(
-          "Seed"
-        );
+        expect(response).toEqual("Powers up Grass-type moves in a pinch.");
       });
     });
   });

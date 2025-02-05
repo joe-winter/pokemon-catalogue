@@ -51,7 +51,7 @@ interface PokemonDetails {
   gender: string[];
   ability: {
     name: string;
-    description: string;
+    url: string;
   };
   stats: {
     hp: number;
@@ -61,6 +61,8 @@ interface PokemonDetails {
     specialDefence: number;
     speed: number;
   };
+  types: TypeUrl[]
+  species: string
 }
 
 interface Genus {
@@ -139,13 +141,26 @@ export default class PokemonService {
     );
     return entry;
   }
+
+  public static async getGender(speciesUrl: string) {
+    const response = await fetch(speciesUrl, { method: "GET" });
+    const data = await response.json();
+    console.log(data.gender_rate)
+    if (data.gender_rate < 1) {
+      return "Genderless";
+    } else if (data.gender_rate > 0 && data.gender_rate < 8) {
+      return "Male / Female";
+    } else {
+      return "Female";
+    }
+  }
   public static async getCategory(speciesUrl: string) {
     const response = await fetch(speciesUrl, { method: "GET" });
     const data = await response.json();
     const genera: Genus[] = data.genera;
     const genus = genera.filter((genus) => genus.language.name === "en");
     // remove pokemon word from genus
-    const category = genus[0].genus.split(" ")[0]
+    const category = genus[0].genus.split(" ")[0];
     return category;
   }
   public static async getAbility(abilityUrl: string) {
@@ -204,7 +219,7 @@ export default class PokemonService {
       gender: [""],
       ability: {
         name: basicData.abilities[0].ability.name,
-        description: "",
+        url: basicData.abilities[0].ability.url,
       },
       stats: {
         hp: basicData.stats[0].base_stat,
@@ -214,6 +229,8 @@ export default class PokemonService {
         specialDefence: basicData.stats[4].base_stat,
         speed: basicData.stats[5].base_stat,
       },
+      types: basicData.types,
+      species: basicData.species.url
     };
   }
 }
