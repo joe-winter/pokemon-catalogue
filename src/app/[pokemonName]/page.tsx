@@ -90,7 +90,7 @@ export default function Page({
         />
         {/* main */}
       </div>
-      <div className="flex gap-4 mt-36 justify-center items-center">
+      <div className="flex gap-4 mt-36 justify-center items-center mb-4">
         <h2 className="font-semibold text-2xl">
           {capitalizeString(pokemon.name)}
         </h2>
@@ -98,11 +98,11 @@ export default function Page({
           {"#" + pokemon.id.toString().padStart(4, "0")}
         </h2>
       </div>
-      <div className="max-w-5xl flex m-auto">
+      <div className="max-w-5xl m-auto">
         <div className="m-auto">
-          <Card>
-            <CardContent>
-              <div className="flex">
+          <Card className="my-8 bg-gray-300">
+            <CardContent className="m-2">
+              <div className="flex items-center">
                 <Image
                   src={"/cherish-ball.png"}
                   quality={100}
@@ -114,103 +114,105 @@ export default function Page({
               </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent>
-              <h3>Height</h3>
-              <div>{pokemon.height}m</div>
-            </CardContent>
-            <CardContent>
-              <h3>Category</h3>
-              <div>{pokemon.category}</div>
-            </CardContent>
-            <CardContent>
-              <h3>Weight</h3>
-              <div>{pokemon.weight}</div>
-            </CardContent>
-            <CardContent>
-              <h3>Gender</h3>
-              <div>{pokemon.gender}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent>
-              <h3>Type</h3>
-              <div className="flex">
-                {pokemon.type &&
-                  pokemon.type.map((type, index) => (
-                    <div
-                      className="bg-black max-w-fit rounded mr-3"
-                      key={index}
-                    >
-                      <div className="px-2 py-0.5 text-white text-[10px]">
-                        {capitalizeString(type)}
+          <div className="grid grid-cols-3 grid-rows-2 gap-4">
+            <Card className="row-span-2">
+              <CardContent>
+                <h3>Height</h3>
+                <div>{pokemon.height}m</div>
+              </CardContent>
+              <CardContent>
+                <h3>Category</h3>
+                <div>{pokemon.category}</div>
+              </CardContent>
+              <CardContent>
+                <h3>Weight</h3>
+                <div>{pokemon.weight}</div>
+              </CardContent>
+              <CardContent>
+                <h3>Gender</h3>
+                <div>{pokemon.gender}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent>
+                <h3>Type</h3>
+                <div className="flex">
+                  {pokemon.type &&
+                    pokemon.type.map((type, index) => (
+                      <div
+                        className="bg-black max-w-fit rounded mr-3"
+                        key={index}
+                      >
+                        <div className="px-2 py-0.5 text-white text-[10px]">
+                          {capitalizeString(type)}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-              </div>
-            </CardContent>
-            <CardContent>
-              <h3>Weaknesses</h3>
-              <div className="flex">
-                {pokemon.weaknesses &&
-                  pokemon.weaknesses.map((type, index) => (
-                    <div
-                      className="bg-black max-w-fit rounded mr-3"
-                      key={index}
-                    >
-                      <div className="px-2 py-0.5 text-white text-[10px]">
-                        {capitalizeString(type)}
+                    ))}
+                </div>
+              </CardContent>
+              <CardContent>
+                <h3>Weaknesses</h3>
+                <div className="flex">
+                  {pokemon.weaknesses &&
+                    pokemon.weaknesses.map((type, index) => (
+                      <div
+                        className="bg-black max-w-fit rounded mr-3"
+                        key={index}
+                      >
+                        <div className="px-2 py-0.5 text-white text-[10px]">
+                          {capitalizeString(type)}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent>
-              <h3>Ability</h3>
-              <div>{pokemon.ability.name}</div>
-              <div>{pokemon.ability.description}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent>
-              <div className="flex items-center">
-                <div>HP</div>
-                <Progress value={pokemon.stats.hp} />
-              </div>
-            </CardContent>
-            <CardContent>
-              <div className="flex items-center">
-                <div>Attack</div>
-                <Progress value={pokemon.stats.attack} />
-              </div>
-            </CardContent>
-            <CardContent>
-              <div className="flex items-center">
-                <div>Defence</div>
-                <Progress value={pokemon.stats.defense} />
-              </div>
-            </CardContent>
-            <CardContent>
-              <div className="flex items-center">
-                <div>Special Attack</div>
-                <Progress value={pokemon.stats.specialAttack} />
-              </div>
-            </CardContent>
-            <CardContent>
-              <div className="flex items-center">
-                <div>Special Defence</div>
-                <Progress value={pokemon.stats.specialDefence} />
-              </div>
-            </CardContent>
-            <CardContent>
-              <div className="flex items-center">
-                <div>Speed</div>
-                <Progress value={pokemon.stats.speed} />
-              </div>
-            </CardContent>
-          </Card>
+                    ))}
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent>
+                <h3>Ability</h3>
+                <div>{pokemon.ability.name}</div>
+                <div>{pokemon.ability.description}</div>
+              </CardContent>
+            </Card>
+            <Card className="col-span-2">
+              <CardContent>
+                <div className="flex items-center justify-between mt-6">
+                  <div>HP</div>
+                  <Progress value={pokemon.stats.hp} />
+                </div>
+              </CardContent>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>Attack</div>
+                  <Progress value={pokemon.stats.attack} />
+                </div>
+              </CardContent>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>Defence</div>
+                  <Progress value={pokemon.stats.defense} />
+                </div>
+              </CardContent>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>Special Attack</div>
+                  <Progress value={pokemon.stats.specialAttack} />
+                </div>
+              </CardContent>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>Special Defence</div>
+                  <Progress value={pokemon.stats.specialDefence} />
+                </div>
+              </CardContent>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>Speed</div>
+                  <Progress value={pokemon.stats.speed} />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
       <div className="px-2">
