@@ -40,34 +40,27 @@ export default function SearchBar({
           value={inputValue}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setInputValue(e.target.value);
-            setIsOpen(true)
+            setIsOpen(true);
           }}
         />
         {isOpen && (
           <Card className="absolute Z-50 w-48 mt-2">
             {searchList.slice(0, 10).map((element, index) => (
               <CardContent className="px-2 py-0 text-lg" key={index}>
-                <button onClick={() => {
-                  setIsOpen(false)
-                  setInputValue(element)
-                }}>
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    setInputValue(element);
+                  }}
+                  className="capitalize"
+                >
                   {splitStringByInputValue(element).map((element, index) =>
                     element === "#" ? (
-                      <span
-                        key={index}
-                        className={`font-semibold ${
-                          index === 0 ? "capitalize" : ""
-                        }`}
-                      >
-                        {inputValue}
+                      <span key={index} className="font-semibold">
+                        {inputValue.toLowerCase()}
                       </span>
                     ) : (
-                      <span
-                        key={index}
-                        className={`${index === 0 ? "capitalize" : ""}`}
-                      >
-                        {element}
-                      </span>
+                      <span key={index}>{element}</span>
                     )
                   )}
                 </button>
