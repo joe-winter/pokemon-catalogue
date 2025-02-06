@@ -1,8 +1,8 @@
-# Pokemon Catelogue
+# Pokemon Catalogue
 
 ## Live
 
-The website has been delpoy on vercel:
+The website has been deployed on vercel:
 https://pokemon-catalogue-omega.vercel.app/
 
 ## Local

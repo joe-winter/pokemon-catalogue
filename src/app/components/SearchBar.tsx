@@ -43,10 +43,11 @@ export default function SearchBar({
     searchFunction();
     setIsOpen(false)
   }
-
+  
   const selectOptionHandler = (element: string) => {
     setIsOpen(false);
     setInputValue(element);
+    searchFunction();
   }
 
   // close dropdown is there is no input value
