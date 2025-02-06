@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Dispatch, SetStateAction } from "react";
 
 interface PageSwitcherProps {
   totalItems: number;

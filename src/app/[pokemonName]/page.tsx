@@ -154,6 +154,7 @@ export default function Page({
             />
             {/* main */}
           </div>
+          {/* pokemon name and number */}
           <div className="flex gap-4 mt-36 justify-center items-center mb-4">
             <h2 className="font-semibold text-2xl">
               {capitalizeString(pokemon.name)}
@@ -163,9 +164,10 @@ export default function Page({
             </h2>
           </div>
           <div className="max-w-5xl m-auto">
+            {/* pokeball and pokemon entry */}
             <div className="m-auto">
               <Card className="my-8 bg-gray-100 shadow-lg border-2">
-                <CardContent className="px-12 py-4">
+                <CardContent className="md:px-12 md:py-4 p-2">
                   <div className="flex items-center">
                     <Image
                       className="bg-white rounded-full border"
@@ -175,10 +177,11 @@ export default function Page({
                       width={80}
                       height={80}
                     />
-                    <div className="p-4">{pokemon.entry}</div>
+                    <div className="md:p-4 p-1">{pokemon.entry}</div>
                   </div>
                 </CardContent>
               </Card>
+              {/* pokemon stats */}
               <div className="grid grid-cols-3 grid-rows-2 gap-4">
                 <GeneralDetailsCard
                   className="row-span-2 px-2 pt-8"
@@ -199,6 +202,7 @@ export default function Page({
                 <StatsCard className="col-span-2 py-6" stats={stats} />
               </div>
             </div>
+            {/* return home button */}
             <div className="my-8">
               <Link href={"/"}>
                 <Button className="text-xs">

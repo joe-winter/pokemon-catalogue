@@ -96,10 +96,10 @@ export default function Home() {
         </h2>
       </div>
       {/* main content */}
-      <div className="w-full flex flex-col max-w-5xl">
+      <div className="w-full flex flex-col md:max-w-5xl px-2">
         {/* search bar */}
-        <div className="flex items-center justify-between  mb-8">
-          <div className="font-semibold text-2xl">{searchMessage}</div>
+        <div className="flex sm:flex-row flex-col items-center justify-between mb-8">
+          <div className="font-semibold text-2xl md:mb-0 mb-4">{searchMessage}</div>
           <SearchBar
             inputValue={searchValue}
             setInputValue={setSearchValue}
@@ -118,7 +118,7 @@ export default function Home() {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-4 max-w-fit gap-x-4 gap-y-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 max-w-fit gap-x-2 gap-y-4  sm:gap-x-3 sm:gap-y-6 md:gap-x-4 md:gap-y-8 mx-auto">
               {displayedPokemons.map((data, index) => (
                 <Link key={index} href={`/${data.name}`}>
                   <PokemonCard
