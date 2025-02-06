@@ -24,6 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      {/* page provider to keep page number state when changing route */}
       <PageProvider>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}

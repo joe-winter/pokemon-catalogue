@@ -183,10 +183,14 @@ export default class PokemonService {
   }
 
   public static async getWeaknesses(damageRelations: DamageRelations[]) {
+    // calculates weaknesses but double damage from types in to one array
+    // then removes duplicates and removes from array if in half damage from
+    // and in no damage from
     let doubleDamageFrom: string[] = [];
     let halfDamageFrom: string[] = [];
     let noDamageFrom: string[] = [];
     for (const damageRelation of damageRelations) {
+      // convert damage relations object to list of strings
       const doubleDamageFromNames = damageRelation.double_damage_from?.map(
         (element) => element.name
       );
@@ -200,6 +204,7 @@ export default class PokemonService {
       );
       noDamageFrom = noDamageFrom.concat(noDamageFromNames);
     }
+    // remove duplicates from list
     doubleDamageFrom = [...new Set(doubleDamageFrom)];
     halfDamageFrom = [...new Set(halfDamageFrom)];
     noDamageFrom = [...new Set(noDamageFrom)];

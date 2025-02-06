@@ -22,7 +22,6 @@ interface PokemonUrl {
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [displayedPokemons, setDisplayedPokemons] = useState<Pokemon[]>([]);
-  // const [pageNumber, setPageNumber] = useState(0);
   const {pageNumber, setPageNumber} = usePage()
   const [initialPokemonList, setInitialPokemonList] = useState<PokemonUrl[]>([
     { name: "", url: "" },
@@ -47,6 +46,7 @@ export default function Home() {
     fetchData();
   }, []);
 
+  // filter initial pokemon list based on input value of the search field
   const searchList = useMemo(() => {
     const list = initialPokemonList.map(element => element.name)
     return list.filter((element) =>

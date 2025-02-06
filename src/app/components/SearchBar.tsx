@@ -39,6 +39,16 @@ export default function SearchBar({
     }
   };
 
+  const searchButtonHandler = () => {
+    searchFunction();
+    setIsOpen(false)
+  }
+
+  const selectOptionHandler = (element: string) => {
+    setIsOpen(false);
+    setInputValue(element);
+  }
+
   // close dropdown is there is no input value
   useEffect(() => {
     if (inputValue === "") {
@@ -62,10 +72,7 @@ export default function SearchBar({
               {searchList.slice(0, 10).map((element, index) => (
                 <CardContent className="px-2 py-0 text-lg" key={index}>
                   <button
-                    onClick={() => {
-                      setIsOpen(false);
-                      setInputValue(element);
-                    }}
+                    onClick={() => selectOptionHandler(element)}
                     className="capitalize"
                   >
                     {/* map through split string if string is # replace with 
@@ -88,10 +95,7 @@ export default function SearchBar({
       </div>
       <div className="ml-3">
         <Button
-          onClick={() => {
-            searchFunction();
-            setIsOpen(false)
-          }}
+          onClick={searchButtonHandler}
           disabled={disabled}
         >
           Search

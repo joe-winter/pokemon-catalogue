@@ -2,12 +2,12 @@
 
 import { createContext, ReactNode, useContext, useState } from "react";
 
-interface PageContextType {
+interface PageContext {
   pageNumber: number;
   setPageNumber: (pageNumber: number) => void;
 }
 
-export const PageContext = createContext<PageContextType>({
+const PageContext = createContext<PageContext>({
   pageNumber: 0,
   setPageNumber: () => {},
 });
@@ -21,6 +21,7 @@ export function PageProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// function to get and update page number
 export function usePage() {
   return useContext(PageContext);
 }
