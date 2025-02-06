@@ -6,6 +6,7 @@ import PageSwitcher from "./components/PageSwitcher";
 import SearchBar from "./components/SearchBar";
 import LoadingSpinner from "./components/LoadingSpinner";
 import Link from "next/link";
+import { usePage } from "./components/PageProvider";
 interface Pokemon {
   name: string;
   image: string;
@@ -21,7 +22,7 @@ interface PokemonUrl {
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [displayedPokemons, setDisplayedPokemons] = useState<Pokemon[]>([]);
-  const [pageNumber, setPageNumber] = useState(0);
+  const {pageNumber, setPageNumber} = usePage()
   const [initialPokemonList, setInitialPokemonList] = useState<PokemonUrl[]>([
     { name: "", url: "" },
   ]);
@@ -45,6 +46,7 @@ export default function Home() {
     fetchData();
   }, []);
 
+  // filter initial pokemon list based on input value of the search field
   const searchList = useMemo(() => {
     const list = initialPokemonList.map(element => element.name)
     return list.filter((element) =>
@@ -70,8 +72,6 @@ export default function Home() {
     fetchData();
   }, [pageNumber, pokemonList]);
 
-  console.log(pokemonList.length);
-
   // when user searches set pokemon list to filtered list
   const handleSearch = async () => {
     if (searchValue !== "") {
@@ -81,6 +81,10 @@ export default function Home() {
       );
       setpokemonList(filteredList);
       setSearchMessage(`Search results for "${searchValue}"`);
+    } else {
+      setPageNumber(0);
+      setpokemonList(initialPokemonList);
+      setSearchMessage("Explore Pokémon")
     }
   };
 
@@ -94,10 +98,10 @@ export default function Home() {
         </h2>
       </div>
       {/* main content */}
-      <div className="w-full flex flex-col max-w-5xl">
+      <div className="w-full flex flex-col md:max-w-5xl px-2">
         {/* search bar */}
-        <div className="flex items-center justify-between  mb-8">
-          <div className="font-semibold text-2xl">{searchMessage}</div>
+        <div className="flex sm:flex-row flex-col items-center justify-between mb-8">
+          <div className="font-semibold text-2xl md:mb-0 mb-4">{searchMessage}</div>
           <SearchBar
             inputValue={searchValue}
             setInputValue={setSearchValue}
@@ -116,7 +120,7 @@ export default function Home() {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-4 max-w-fit gap-x-4 gap-y-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 max-w-fit gap-x-2 gap-y-4  sm:gap-x-3 sm:gap-y-6 md:gap-x-4 md:gap-y-8 mx-auto">
               {displayedPokemons.map((data, index) => (
                 <Link key={index} href={`/${data.name}`}>
                   <PokemonCard

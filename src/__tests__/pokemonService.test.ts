@@ -3,35 +3,49 @@ import PokemonService from "@/app/services/pokemonService";
 describe("pokemon service", () => {
   describe("get all pokemons", () => {
     describe("get pokemon list", () => {
+      it("returns a list of pokemon urls", async () => {
+        fetchMock.resetMocks();
+        fetchMock.mockResponseOnce(
+          JSON.stringify({
+            count: 1304,
+            next: null,
+            previous: null,
+            results: [
+              {
+                name: "bulbasaur",
+                url: "https://pokeapi.co/api/v2/pokemon/1/",
+              },
+              {
+                name: "ivysaur",
+                url: "https://pokeapi.co/api/v2/pokemon/2/",
+              },
+              {
+                name: "venusaur",
+                url: "https://pokeapi.co/api/v2/pokemon/3/",
+              },
+            ],
+          })
+        );
+        const response = await PokemonService.getAllPokemon();
+        expect(response[0]).toMatchObject({
+          name: "bulbasaur",
+          url: "https://pokeapi.co/api/v2/pokemon/1/",
+        });
+      });
+    });
+    it("rejects with error if the status is not 200", async () => {
       fetchMock.resetMocks();
       fetchMock.mockResponseOnce(
-        JSON.stringify({
-          count: 1304,
-          next: null,
-          previous: null,
-          results: [
-            {
-              name: "bulbasaur",
-              url: "https://pokeapi.co/api/v2/pokemon/1/",
-            },
-            {
-              name: "ivysaur",
-              url: "https://pokeapi.co/api/v2/pokemon/2/",
-            },
-            {
-              name: "venusaur",
-              url: "https://pokeapi.co/api/v2/pokemon/3/",
-            },
-          ],
-        })
+        JSON.stringify({ message: "Something went wrong" }),
+        { status: 400 }
       );
-    });
-    it("returns a list of pokemon urls", async () => {
-      const response = await PokemonService.getAllPokemon();
-      expect(response[0]).toMatchObject({
-        name: "bulbasaur",
-        url: "https://pokeapi.co/api/v2/pokemon/1/",
-      });
+      try {
+        await PokemonService.getAllPokemon();
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          expect(err.message).toEqual("Unable to fetch pokemon list");
+        }
+      }
     });
     describe("get basic pokemon data", () => {
       beforeEach(() => {
@@ -129,6 +143,25 @@ describe("pokemon service", () => {
         ]);
 
         expect(response[0].name).toEqual("bulbasaur");
+      });
+      it("rejects with error if the status is not 200", async () => {
+        fetchMock.resetMocks();
+        fetchMock.mockResponseOnce(
+          JSON.stringify({ message: "Something went wrong" }),
+          { status: 400 }
+        );
+        try {
+          await PokemonService.getBasicPokemonData([
+            {
+              name: "bulbasaur",
+              url: "https://pokeapi.co/api/v2/pokemon/1/",
+            },
+          ]);
+        } catch (err: unknown) {
+          if (err instanceof Error) {
+            expect(err.message).toEqual("Unable to fetch pokemon data");
+          }
+        }
       });
     });
   });
@@ -243,6 +276,22 @@ describe("pokemon service", () => {
         expect(response.speciesUrl).toEqual(
           "https://pokeapi.co/api/v2/pokemon-species/1/"
         );
+      });
+      it("rejects with error if the status is not 200", async () => {
+        fetchMock.resetMocks();
+        fetchMock.mockResponseOnce(
+          JSON.stringify({ message: "Something went wrong" }),
+          { status: 400 }
+        );
+        try {
+          await PokemonService.getPokemonData("bulbasaur");
+        } catch (err: unknown) {
+          if (err instanceof Error) {
+            expect(err.message).toEqual(
+              "Unable to fetch detailed pokemon data"
+            );
+          }
+        }
       });
     });
     describe("get type data", () => {
@@ -470,6 +519,22 @@ describe("pokemon service", () => {
           ["fire", "flying", "ice"].sort()
         );
         expect(response.types.sort()).toEqual(["grass", "poison"].sort());
+      });
+      it("rejects with error if the status is not 200", async () => {
+        fetchMock.resetMocks();
+        fetchMock.mockResponseOnce(
+          JSON.stringify({ message: "Something went wrong" }),
+          { status: 400 }
+        );
+        try {
+          await PokemonService.getTypeData([
+            "https://pokeapi.co/api/v2/type/12/",
+          ]);
+        } catch (err: unknown) {
+          if (err instanceof Error) {
+            expect(err.message).toEqual("Unable to fetch pokemon type data");
+          }
+        }
       });
     });
     describe("get species data", () => {
@@ -885,6 +950,22 @@ describe("pokemon service", () => {
         );
         expect(response.gender).toEqual("Female");
       });
+      it("rejects with error if the status is not 200", async () => {
+        fetchMock.resetMocks();
+        fetchMock.mockResponseOnce(
+          JSON.stringify({ message: "Something went wrong" }),
+          { status: 400 }
+        );
+        try {
+          await PokemonService.getSpeciesData(
+            "https://pokeapi.co/api/v2/pokemon-species/1/"
+          );
+        } catch (err: unknown) {
+          if (err instanceof Error) {
+            expect(err.message).toEqual("Unable to fetch pokemon species data");
+          }
+        }
+      });
     });
   });
 
@@ -906,12 +987,14 @@ describe("pokemon service", () => {
               },
             },
           ],
-          name: "overgrow"
+          name: "overgrow",
         })
       );
     });
     it("should have given url in fetch call", async () => {
-      await PokemonService.getAbilityData("https://pokeapi.co/api/v2/ability/65/");
+      await PokemonService.getAbilityData(
+        "https://pokeapi.co/api/v2/ability/65/"
+      );
       expect(fetchMock).toHaveBeenCalledWith(
         "https://pokeapi.co/api/v2/ability/65/",
         { method: "GET" }
@@ -921,8 +1004,26 @@ describe("pokemon service", () => {
       const response = await PokemonService.getAbilityData(
         "https://pokeapi.co/api/v2/ability/65/"
       );
-      expect(response.ability.description).toEqual("Powers up Grass-type moves in a pinch.");
+      expect(response.ability.description).toEqual(
+        "Powers up Grass-type moves in a pinch."
+      );
       expect(response.ability.name).toEqual("overgrow");
+    });
+    it("rejects with error if the status is not 200", async () => {
+      fetchMock.resetMocks();
+      fetchMock.mockResponseOnce(
+        JSON.stringify({ message: "Something went wrong" }),
+        { status: 400 }
+      );
+      try {
+        await PokemonService.getAbilityData(
+          "https://pokeapi.co/api/v2/ability/65/"
+        );
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          expect(err.message).toEqual("Unable to fetch pokemon ability data");
+        }
+      }
     });
   });
 });

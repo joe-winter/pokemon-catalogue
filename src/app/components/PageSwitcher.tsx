@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Dispatch, SetStateAction } from "react";
 
 interface PageSwitcherProps {
   totalItems: number;
   itemsPerPage: number;
   pageNumber: number;
-  setPageNumber: Dispatch<SetStateAction<number>>;
+  setPageNumber: (pageNumber: number) => void;
   disabled?: boolean;
 }
 

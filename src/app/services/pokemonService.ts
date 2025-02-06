@@ -43,6 +43,14 @@ interface Genus {
   };
 }
 
+interface FlavorText {
+  flavor_text: string;
+  language: {
+    name: string;
+    url: string;
+  };
+}
+
 interface TypeData {
   types: string[];
   weaknesses: string[];
@@ -88,6 +96,10 @@ export default class PokemonService {
       "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0",
       { method: "GET" }
     );
+
+    if (response.status !== 200) {
+      throw new Error("Unable to fetch pokemon list");
+    }
     const data: PokemonFetchData = await response.json();
     return data.results;
   }
@@ -98,6 +110,9 @@ export default class PokemonService {
     const pokemonList: BasicPokemon[] = [];
     for (const pokemon of pokemonUrlList) {
       const response = await fetch(pokemon.url, { method: "GET" });
+      if (response.status !== 200) {
+        throw new Error("Unable to fetch pokemon data");
+      }
       const data = await response.json();
       const basicPokemon = {
         name: data.name,
@@ -124,6 +139,9 @@ export default class PokemonService {
         method: "GET",
       }
     );
+    if (response.status !== 200) {
+      throw new Error("Unable to fetch detailed pokemon data");
+    }
     const basicData = await response.json();
 
     return {
@@ -153,6 +171,9 @@ export default class PokemonService {
     const damageRelations: DamageRelations[] = [];
     for (const url of typeUrl) {
       const response = await fetch(url, { method: "GET" });
+      if (response.status !== 200) {
+        throw new Error("Unable to fetch pokemon type data");
+      }
       const data = await response.json();
       damageRelations.push(data.damage_relations);
       types.push(data.name);
@@ -162,10 +183,14 @@ export default class PokemonService {
   }
 
   public static async getWeaknesses(damageRelations: DamageRelations[]) {
+    // calculates weaknesses but double damage from types in to one array
+    // then removes duplicates and removes from array if in half damage from
+    // and in no damage from
     let doubleDamageFrom: string[] = [];
     let halfDamageFrom: string[] = [];
     let noDamageFrom: string[] = [];
     for (const damageRelation of damageRelations) {
+      // convert damage relations object to list of strings
       const doubleDamageFromNames = damageRelation.double_damage_from?.map(
         (element) => element.name
       );
@@ -179,6 +204,7 @@ export default class PokemonService {
       );
       noDamageFrom = noDamageFrom.concat(noDamageFromNames);
     }
+    // remove duplicates from list
     doubleDamageFrom = [...new Set(doubleDamageFrom)];
     halfDamageFrom = [...new Set(halfDamageFrom)];
     noDamageFrom = [...new Set(noDamageFrom)];
@@ -196,11 +222,11 @@ export default class PokemonService {
 
   public static async getSpeciesData(speciesUrl: string): Promise<SpeciesData> {
     const response = await fetch(speciesUrl, { method: "GET" });
+    if (response.status !== 200) {
+      throw new Error("Unable to fetch pokemon species data");
+    }
     const data = await response.json();
-    const entry = data.flavor_text_entries?.[0].flavor_text.replace(
-      /[\f\n]+/gm,
-      " "
-    );
+    const entry = this.getEnglishFlavorText(data.flavor_text_entries);
     const genera: Genus[] = data.genera;
     const genus = genera.filter((genus) => genus.language.name === "en");
     // remove pokemon word from genus
@@ -223,18 +249,28 @@ export default class PokemonService {
     }
   }
 
-  // /a
-
   public static async getAbilityData(abilityUrl: string): Promise<AbilityData> {
     const response = await fetch(abilityUrl, { method: "GET" });
+    if (response.status !== 200) {
+      throw new Error("Unable to fetch pokemon ability data");
+    }
     const data = await response.json();
-    const description = data.flavor_text_entries?.[0].flavor_text.replace(
+    return {
+      ability: {
+        name: data.name,
+        description: this.getEnglishFlavorText(data.flavor_text_entries),
+      },
+    };
+  }
+
+  private static getEnglishFlavorText(flavorTextList: FlavorText[]): string {
+    const englishDescription: FlavorText[] = flavorTextList.filter(
+      (element: FlavorText) => element.language.name === "en"
+    );
+    const formattedDescription = englishDescription[0].flavor_text.replace(
       /[\f\n]+/gm,
       " "
     );
-    return{ability: {
-      name: data.name,
-      description: description
-    }};
+    return formattedDescription;
   }
 }

@@ -14,7 +14,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 interface PokemonDetails {
   name: string;
   id: number;
-  imageUrl: string;
+  image: string;
   entry: string;
   height: number;
   category: string;
@@ -39,7 +39,7 @@ interface PokemonDetails {
 const emptyPokemon = {
   name: "",
   id: 0,
-  imageUrl: "/cherish-ball.png",
+  image: "/cherish-ball.png",
   entry: "",
   height: 0,
   category: "",
@@ -85,7 +85,7 @@ export default function Page({
         const pokemon = {
           name: pokemonData.name,
           id: pokemonData.id,
-          imageUrl: pokemonData.image,
+          image: pokemonData.image,
           entry: speciesData.entry,
           height: pokemonData.height,
           category: speciesData.category,
@@ -144,16 +144,21 @@ export default function Page({
         </div>
       ) : (
         <>
-          <div className="bg-gray-300 h-40 flex justify-center">
-            <Image
-              className="bg-gray-200 rounded-full absolute z-50 mt-24 border-white border-2"
-              src={pokemon.imageUrl}
-              alt={pokemon.name}
-              width={200}
-              height={200}
-            />
+          <div className="bg-[#d1d1d1] h-40 flex justify-center">
+            {/* only load image if given image src */}
+            {pokemon.image && (
+              <Image
+                className="bg-[#f4f4f5] rounded-full absolute z-50 mt-24 border-white border-2"
+                src={pokemon.image}
+                alt={pokemon.name}
+                width={200}
+                height={200}
+                unoptimized={true}
+              />
+            )}
             {/* main */}
           </div>
+          {/* pokemon name and number */}
           <div className="flex gap-4 mt-36 justify-center items-center mb-4">
             <h2 className="font-semibold text-2xl">
               {capitalizeString(pokemon.name)}
@@ -162,10 +167,11 @@ export default function Page({
               {"#" + pokemon.id.toString().padStart(4, "0")}
             </h2>
           </div>
-          <div className="max-w-5xl m-auto">
+          <div className="md:max-w-5xl lg:m-auto mx-4">
+            {/* pokeball and pokemon entry */}
             <div className="m-auto">
-              <Card className="my-8 bg-gray-100 shadow-lg border-2">
-                <CardContent className="px-12 py-4">
+              <Card className="my-8 bg-[#f5f4f4] shadow-lg border-2">
+                <CardContent className="md:px-12 md:py-4 p-2">
                   <div className="flex items-center">
                     <Image
                       className="bg-white rounded-full border"
@@ -174,12 +180,14 @@ export default function Page({
                       alt="cherish-ball"
                       width={80}
                       height={80}
+                      unoptimized={true}
                     />
-                    <div className="p-4">{pokemon.entry}</div>
+                    <div className="md:p-4 p-1">{pokemon.entry}</div>
                   </div>
                 </CardContent>
               </Card>
-              <div className="grid grid-cols-3 grid-rows-2 gap-4">
+              {/* pokemon stats */}
+              <div className="md:grid md:grid-cols-3 md:grid-rows-2 flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:grid-rows-3">
                 <GeneralDetailsCard
                   className="row-span-2 px-2 pt-8"
                   details={details}
@@ -187,11 +195,13 @@ export default function Page({
                 <BadgeListCard categories={categories} className="px-2 pt-8" />
                 <Card className="px-2 pt-8">
                   <CardContent>
-                    <h3 className="text-2xl font-semibold">Ability</h3>
-                    <div className="text-xl pt-2">
+                    <h3 className="text-lg sm:text-2xl font-semibold">
+                      Ability
+                    </h3>
+                    <div className="text-md sm:text-xl pt-2">
                       {capitalizeString(pokemon.ability.name)}
                     </div>
-                    <div className="text-xl pt-2 italic">
+                    <div className="text-md sm:text-xl pt-2 italic">
                       {pokemon.ability.description}
                     </div>
                   </CardContent>
@@ -199,6 +209,7 @@ export default function Page({
                 <StatsCard className="col-span-2 py-6" stats={stats} />
               </div>
             </div>
+            {/* return home button */}
             <div className="my-8">
               <Link href={"/"}>
                 <Button className="text-xs">

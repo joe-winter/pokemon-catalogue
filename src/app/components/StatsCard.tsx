@@ -18,8 +18,8 @@ export default function StatsCard({ stats, className }: StatsCardProps) {
         {stats.map((stat, index) => (
           <CardContent key={index} className="px-8 py-1.5">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-xl">{stat.name}</h3>
-              <Progress value={stat.value} />
+              <h3 className="font-semibold text-md sm:text-xl">{stat.name}</h3>
+              <Progress value={stat.value} className="sm:w-96 md:w-64 w-40 lg:w-96"/>
             </div>
           </CardContent>
         ))}
