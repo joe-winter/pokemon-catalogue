@@ -73,14 +73,15 @@ export default function Home() {
   }, [pageNumber, pokemonList]);
 
   // when user searches set pokemon list to filtered list
-  const handleSearch = async () => {
-    if (searchValue !== "") {
+  const handleSearch = async (value: string) => {
+    if (value !== "") {
+      console.log(value)
       setPageNumber(0);
       const filteredList = initialPokemonList.filter((pokemon) =>
-        pokemon.name.toLowerCase().includes(searchValue.toLowerCase())
+        pokemon.name.toLowerCase().includes(value.toLowerCase())
       );
       setpokemonList(filteredList);
-      setSearchMessage(`Search results for "${searchValue}"`);
+      setSearchMessage(`Search results for "${value}"`);
     } else {
       setPageNumber(0);
       setpokemonList(initialPokemonList);

@@ -13,7 +13,7 @@ interface SearchBarProps {
   inputValue: string;
   setInputValue: Dispatch<SetStateAction<string>>;
   placeholder?: string;
-  searchFunction: () => void;
+  searchFunction: (value: string) => void;
   disabled?: boolean;
   searchList: string[];
 }
@@ -40,14 +40,15 @@ export default function SearchBar({
   };
 
   const searchButtonHandler = () => {
-    searchFunction();
+    searchFunction(inputValue);
     setIsOpen(false)
   }
   
   const selectOptionHandler = (element: string) => {
-    setIsOpen(false);
     setInputValue(element);
-    searchFunction();
+    console.log("hello",element)
+    setIsOpen(false);
+    searchFunction(element);
   }
 
   // close dropdown is there is no input value
