@@ -43,6 +43,14 @@ interface Genus {
   };
 }
 
+interface FlavorText {
+  flavor_text: string;
+  language: {
+    name: string;
+    url: string;
+  };
+}
+
 interface TypeData {
   types: string[];
   weaknesses: string[];
@@ -197,10 +205,7 @@ export default class PokemonService {
   public static async getSpeciesData(speciesUrl: string): Promise<SpeciesData> {
     const response = await fetch(speciesUrl, { method: "GET" });
     const data = await response.json();
-    const entry = data.flavor_text_entries?.[0].flavor_text.replace(
-      /[\f\n]+/gm,
-      " "
-    );
+    const entry = this.getEnglishFlavorText(data.flavor_text_entries)
     const genera: Genus[] = data.genera;
     const genus = genera.filter((genus) => genus.language.name === "en");
     // remove pokemon word from genus
@@ -223,18 +228,27 @@ export default class PokemonService {
     }
   }
 
-  // /a
 
   public static async getAbilityData(abilityUrl: string): Promise<AbilityData> {
     const response = await fetch(abilityUrl, { method: "GET" });
     const data = await response.json();
-    const description = data.flavor_text_entries?.[0].flavor_text.replace(
+    return {
+      ability: {
+        name: data.name,
+        description: this.getEnglishFlavorText(data.flavor_text_entries),
+      },
+    };
+  }
+  
+  private static getEnglishFlavorText (flavorTextList: FlavorText[]): string {
+    const englishDescription: FlavorText[] = flavorTextList.filter(
+      (element: FlavorText) => element.language.name === "en"
+    );
+    const formattedDescription = englishDescription[0].flavor_text.replace(
       /[\f\n]+/gm,
       " "
     );
-    return{ability: {
-      name: data.name,
-      description: description
-    }};
+    return formattedDescription
+    
   }
 }
