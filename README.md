@@ -56,4 +56,3 @@ All files have 100% test coverage, as follows:
 | - utils.ts               | 100     | 100      | 100     | 100     | -                 |
 
 
-## Features
