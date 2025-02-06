@@ -87,7 +87,13 @@ export default function SearchBar({
         )}
       </div>
       <div className="ml-3">
-        <Button onClick={searchFunction} disabled={disabled}>
+        <Button
+          onClick={() => {
+            searchFunction();
+            setIsOpen(false)
+          }}
+          disabled={disabled}
+        >
           Search
         </Button>
       </div>
