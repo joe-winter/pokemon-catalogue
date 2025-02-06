@@ -28,7 +28,8 @@ export default function PokemonCard({
               alt={imageUrl}
               width={200}
               height={200}
-              quality={100}
+              // quality={100}
+              unoptimized={true}
             />
           </CardContent>
         </div>

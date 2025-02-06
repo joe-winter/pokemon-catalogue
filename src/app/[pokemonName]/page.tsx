@@ -153,6 +153,7 @@ export default function Page({
                 alt={pokemon.name}
                 width={200}
                 height={200}
+                unoptimized={true}
               />
             )}
             {/* main */}
@@ -179,6 +180,7 @@ export default function Page({
                       alt="cherish-ball"
                       width={80}
                       height={80}
+                      unoptimized={true}
                     />
                     <div className="md:p-4 p-1">{pokemon.entry}</div>
                   </div>
