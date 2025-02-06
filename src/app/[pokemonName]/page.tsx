@@ -163,7 +163,7 @@ export default function Page({
               {"#" + pokemon.id.toString().padStart(4, "0")}
             </h2>
           </div>
-          <div className="max-w-5xl m-auto">
+          <div className="md:max-w-5xl lg:m-auto mx-4">
             {/* pokeball and pokemon entry */}
             <div className="m-auto">
               <Card className="my-8 bg-gray-100 shadow-lg border-2">
@@ -182,7 +182,7 @@ export default function Page({
                 </CardContent>
               </Card>
               {/* pokemon stats */}
-              <div className="grid grid-cols-3 grid-rows-2 gap-4">
+              <div className="md:grid md:grid-cols-3 md:grid-rows-2 flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:grid-rows-3">
                 <GeneralDetailsCard
                   className="row-span-2 px-2 pt-8"
                   details={details}
@@ -190,11 +190,11 @@ export default function Page({
                 <BadgeListCard categories={categories} className="px-2 pt-8" />
                 <Card className="px-2 pt-8">
                   <CardContent>
-                    <h3 className="text-2xl font-semibold">Ability</h3>
-                    <div className="text-xl pt-2">
+                    <h3 className="text-lg sm:text-2xl font-semibold">Ability</h3>
+                    <div className="text-md sm:text-xl pt-2">
                       {capitalizeString(pokemon.ability.name)}
                     </div>
-                    <div className="text-xl pt-2 italic">
+                    <div className="text-md sm:text-xl pt-2 italic">
                       {pokemon.ability.description}
                     </div>
                   </CardContent>

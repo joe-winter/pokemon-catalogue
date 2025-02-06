@@ -16,8 +16,8 @@ export default function GeneralDetailsCard({
     <Card className={`${className}`}>
       {details.map((detail, index) => (
         <CardContent key={index}>
-          <h3 className="text-2xl font-semibold">{detail.heading}</h3>
-          <div className="text-xl pt-2">{detail.value}</div>
+          <h3 className="text-lg sm:text-2xl font-semibold">{detail.heading}</h3>
+          <div className="text-md sm:text-xl pt-2">{detail.value}</div>
         </CardContent>
       ))}
     </Card>

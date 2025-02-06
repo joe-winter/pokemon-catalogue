@@ -14,7 +14,7 @@ export default function BadgeListCard({ categories, className }: BadgeListCardPr
     <Card className={`${className}`}>
       {categories.map((category, index) => (
         <CardContent key={index}>
-          <h3 className="text-2xl font-semibold">
+          <h3 className="text-lg sm:text-2xl font-semibold">
             {capitalizeString(category.heading)}
           </h3>
           <div className="flex pt-3">
