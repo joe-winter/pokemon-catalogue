@@ -83,6 +83,10 @@ export default function Home() {
       );
       setpokemonList(filteredList);
       setSearchMessage(`Search results for "${searchValue}"`);
+    } else {
+      setPageNumber(0);
+      setpokemonList(initialPokemonList);
+      setSearchMessage("Explore Pokémon")
     }
   };
 

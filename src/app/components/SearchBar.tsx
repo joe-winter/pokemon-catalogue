@@ -1,7 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 
 interface SearchBarProps {
   inputValue: string;
@@ -26,12 +32,19 @@ export default function SearchBar({
     if (inputValue) {
       // replace substring that matches input value with $#$
       const replaced = element.replace(inputValue.toLowerCase(), "$#$");
-      // split at $ and remove an '' values
+      // split at $ and remove all '' values
       return replaced.split("$").filter((element) => element);
     } else {
       return [element];
     }
   };
+
+  // close dropdown is there is no input value
+  useEffect(() => {
+    if (inputValue === "") {
+      setIsOpen(false);
+    }
+  }, [inputValue]);
   return (
     <div className="flex">
       <div className="w-48">
@@ -44,29 +57,33 @@ export default function SearchBar({
           }}
         />
         {isOpen && (
-          <Card className="absolute Z-50 w-48 mt-2">
-            {searchList.slice(0, 10).map((element, index) => (
-              <CardContent className="px-2 py-0 text-lg" key={index}>
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    setInputValue(element);
-                  }}
-                  className="capitalize"
-                >
-                  {splitStringByInputValue(element).map((element, index) =>
-                    element === "#" ? (
-                      <span key={index} className="font-semibold">
-                        {inputValue.toLowerCase()}
-                      </span>
-                    ) : (
-                      <span key={index}>{element}</span>
-                    )
-                  )}
-                </button>
-              </CardContent>
-            ))}
-          </Card>
+          <div>
+            <Card className="absolute Z-50 w-48 mt-2">
+              {searchList.slice(0, 10).map((element, index) => (
+                <CardContent className="px-2 py-0 text-lg" key={index}>
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      setInputValue(element);
+                    }}
+                    className="capitalize"
+                  >
+                    {/* map through split string if string is # replace with 
+                    input value and set style to bold */}
+                    {splitStringByInputValue(element).map((element, index) =>
+                      element === "#" ? (
+                        <span key={index} className="font-semibold">
+                          {inputValue.toLowerCase()}
+                        </span>
+                      ) : (
+                        <span key={index}>{element}</span>
+                      )
+                    )}
+                  </button>
+                </CardContent>
+              ))}
+            </Card>
+          </div>
         )}
       </div>
       <div className="ml-3">
