@@ -1,8 +1,17 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pokemon Catelogue
 
-## Getting Started
+## Live
 
-First, run the development server:
+The website has been delpoy on vercel:
+https://pokemon-catalogue-7t1ysm93d-joe-winters-projects-745eadc5.vercel.app/
+
+## Local
+
+To view the website locally clone this repository and run the development environment:
+
+```bash
+git clone https://github.com/joe-winter/pokemon-catalogue.git
+```
 
 ```bash
 npm run dev
@@ -14,23 +23,36 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the website.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- NextJS
+- React
+- TypeScript
+- Shadcn/ui
+- Tailwind CSS
+- Jest
 
-## Learn More
+### Test Coverage:
 
-To learn more about Next.js, take a look at the following resources:
+All files have 100% test coverage, as follows:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Coverage Overview:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| File                     | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s |
+| ------------------------ | ------- | -------- | ------- | ------- | ----------------- |
+| All files                | 100     | 100      | 100     | 100     | -                 |
+| app/components           | 100     | 100      | 100     | 100     | -                 |
+| - BadgeListCard.tsx      | 100     | 100      | 100     | 100     | -                 |
+| - GeneralDetailsCard.tsx | 100     | 100      | 100     | 100     | -                 |
+| - PageSwitcher.tsx       | 100     | 100      | 100     | 100     | -                 |
+| - PokemonCard.tsx        | 100     | 100      | 100     | 100     | -                 |
+| - SearchBar.tsx          | 100     | 100      | 100     | 100     | -                 |
+| - StatsCard.tsx          | 100     | 100      | 100     | 100     | -                 |
+| app/services             | 100     | 100      | 100     | 100     | -                 |
+| - pokemonService.ts      | 100     | 100      | 100     | 100     | -                 |
+| lib                      | 100     | 100      | 100     | 100     | -                 |
+| - utils.ts               | 100     | 100      | 100     | 100     | -                 |
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
