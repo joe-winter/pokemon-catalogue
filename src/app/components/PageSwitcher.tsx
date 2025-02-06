@@ -5,7 +5,7 @@ interface PageSwitcherProps {
   totalItems: number;
   itemsPerPage: number;
   pageNumber: number;
-  setPageNumber: Dispatch<SetStateAction<number>>;
+  setPageNumber: (pageNumber: number) => void;
   disabled?: boolean;
 }
 

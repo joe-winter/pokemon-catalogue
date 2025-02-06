@@ -6,6 +6,7 @@ import PageSwitcher from "./components/PageSwitcher";
 import SearchBar from "./components/SearchBar";
 import LoadingSpinner from "./components/LoadingSpinner";
 import Link from "next/link";
+import { usePage } from "./components/PageProvider";
 interface Pokemon {
   name: string;
   image: string;
@@ -21,7 +22,8 @@ interface PokemonUrl {
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [displayedPokemons, setDisplayedPokemons] = useState<Pokemon[]>([]);
-  const [pageNumber, setPageNumber] = useState(0);
+  // const [pageNumber, setPageNumber] = useState(0);
+  const {pageNumber, setPageNumber} = usePage()
   const [initialPokemonList, setInitialPokemonList] = useState<PokemonUrl[]>([
     { name: "", url: "" },
   ]);
