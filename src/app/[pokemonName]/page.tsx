@@ -14,7 +14,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 interface PokemonDetails {
   name: string;
   id: number;
-  imageUrl: string;
+  image: string;
   entry: string;
   height: number;
   category: string;
@@ -39,7 +39,7 @@ interface PokemonDetails {
 const emptyPokemon = {
   name: "",
   id: 0,
-  imageUrl: "/cherish-ball.png",
+  image: "/cherish-ball.png",
   entry: "",
   height: 0,
   category: "",
@@ -85,7 +85,7 @@ export default function Page({
         const pokemon = {
           name: pokemonData.name,
           id: pokemonData.id,
-          imageUrl: pokemonData.image,
+          image: pokemonData.image,
           entry: speciesData.entry,
           height: pokemonData.height,
           category: speciesData.category,
@@ -145,13 +145,16 @@ export default function Page({
       ) : (
         <>
           <div className="bg-gray-300 h-40 flex justify-center">
-            <Image
-              className="bg-gray-200 rounded-full absolute z-50 mt-24 border-white border-2"
-              src={pokemon.imageUrl}
-              alt={pokemon.name}
-              width={200}
-              height={200}
-            />
+            {/* only load image if given image src */}
+            {pokemon.image && (
+              <Image
+                className="bg-gray-200 rounded-full absolute z-50 mt-24 border-white border-2"
+                src={pokemon.image}
+                alt={pokemon.name}
+                width={200}
+                height={200}
+              />
+            )}
             {/* main */}
           </div>
           {/* pokemon name and number */}
@@ -190,7 +193,9 @@ export default function Page({
                 <BadgeListCard categories={categories} className="px-2 pt-8" />
                 <Card className="px-2 pt-8">
                   <CardContent>
-                    <h3 className="text-lg sm:text-2xl font-semibold">Ability</h3>
+                    <h3 className="text-lg sm:text-2xl font-semibold">
+                      Ability
+                    </h3>
                     <div className="text-md sm:text-xl pt-2">
                       {capitalizeString(pokemon.ability.name)}
                     </div>

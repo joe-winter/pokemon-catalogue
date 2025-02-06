@@ -72,8 +72,6 @@ export default function Home() {
     fetchData();
   }, [pageNumber, pokemonList]);
 
-  console.log(pokemonList.length);
-
   // when user searches set pokemon list to filtered list
   const handleSearch = async () => {
     if (searchValue !== "") {
