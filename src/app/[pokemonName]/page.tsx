@@ -144,11 +144,11 @@ export default function Page({
         </div>
       ) : (
         <>
-          <div className="bg-gray-300 h-40 flex justify-center">
+          <div className="bg-[#d1d1d1] h-40 flex justify-center">
             {/* only load image if given image src */}
             {pokemon.image && (
               <Image
-                className="bg-gray-200 rounded-full absolute z-50 mt-24 border-white border-2"
+                className="bg-[#f4f4f5] rounded-full absolute z-50 mt-24 border-white border-2"
                 src={pokemon.image}
                 alt={pokemon.name}
                 width={200}
@@ -170,7 +170,7 @@ export default function Page({
           <div className="md:max-w-5xl lg:m-auto mx-4">
             {/* pokeball and pokemon entry */}
             <div className="m-auto">
-              <Card className="my-8 bg-gray-100 shadow-lg border-2">
+              <Card className="my-8 bg-[#f5f4f4] shadow-lg border-2">
                 <CardContent className="md:px-12 md:py-4 p-2">
                   <div className="flex items-center">
                     <Image

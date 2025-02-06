@@ -1,8 +1,5 @@
 import Image from "next/image";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { capitalizeString } from "@/lib/utils";
 
 interface PokemonCardProps {
@@ -21,20 +18,24 @@ export default function PokemonCard({
   return (
     <div className="max-w-64">
       <Card>
-        <div className="bg-gray-100 rounded-t-xl">
+        <div className="bg-[#f4f4f5] rounded-t-xl">
           <CardContent>
-            <Image
-              src={imageUrl}
-              alt={imageUrl}
-              width={200}
-              height={200}
-              // quality={100}
-              unoptimized={true}
-            />
+            {imageUrl && (
+              <Image
+                src={imageUrl}
+                alt={imageUrl}
+                width={200}
+                height={200}
+                quality={100}
+                unoptimized={true}
+              />
+            )}
           </CardContent>
         </div>
         <CardContent>
-          <h2 className="font-bold text-xl pt-3 text-nowrap overflow-hidden">{capitalizeString(name)}</h2>
+          <h2 className="font-bold text-xl pt-3 text-nowrap overflow-hidden">
+            {capitalizeString(name)}
+          </h2>
           <div className="text-gray-500 text-sm mb-6">{number}</div>
           <div className="flex">
             {types &&
